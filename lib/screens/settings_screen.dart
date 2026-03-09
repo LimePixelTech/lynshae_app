@@ -194,14 +194,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
 
-                  // 外观设置
-                  SliverToBoxAdapter(
-                    child: _buildGlassSection(
-                      title: '外观',
-                      children: [_buildThemeSelector(theme, isDark)],
-                    ),
-                  ),
-
                   // 基础信息
                   SliverToBoxAdapter(
                     child: _buildGlassSection(

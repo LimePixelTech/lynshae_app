@@ -1,11 +1,66 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../models/device_model.dart';
-import '../widgets/device_card.dart';
 import '../widgets/glass_container.dart';
-import '../constants/app_constants.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_utils.dart';
+import 'product_control_screen.dart';
+
+/// 产品类型枚举
+enum ProductType {
+  robotDog('机器狗', Icons.pets_rounded, Color(0xFF00D4FF)),
+  robotCat('机器猫', Icons.smart_toy_rounded, Color(0xFFFF6B6B)),
+  smartClock('智能闹钟', Icons.access_alarm_rounded, Color(0xFFFFD93D)),
+  smartLamp('智能台灯', Icons.lightbulb_rounded, Color(0xFF6BCB77)),
+  airPurifier('空气净化器', Icons.air_rounded, Color(0xFF4D96FF));
+
+  final String name;
+  final IconData icon;
+  final Color color;
+
+  const ProductType(this.name, this.icon, this.color);
+}
+
+/// 产品模型
+class Product {
+  final String id;
+  final String name;
+  final ProductType type;
+  final DeviceModel? device;
+  final bool isOnline;
+  final int batteryLevel;
+  final bool isOn;
+
+  Product({
+    required this.id,
+    required this.name,
+    required this.type,
+    this.device,
+    this.isOnline = false,
+    this.batteryLevel = 0,
+    this.isOn = false,
+  });
+
+  Product copyWith({
+    String? id,
+    String? name,
+    ProductType? type,
+    DeviceModel? device,
+    bool? isOnline,
+    int? batteryLevel,
+    bool? isOn,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      type: type ?? this.type,
+      device: device ?? this.device,
+      isOnline: isOnline ?? this.isOnline,
+      batteryLevel: batteryLevel ?? this.batteryLevel,
+      isOn: isOn ?? this.isOn,
+    );
+  }
+}
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,19 +70,44 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  DeviceModel device = DeviceModel(
-    id: 'dog_001',
-    name: 'LynShae',
-    isOnline: true,
-    batteryLevel: 78,
-    mode: DeviceMode.companion,
-    macAddress: 'A4:B5:C6:D7:E8:F9',
-    firmwareVersion: 'v2.1.0',
-  );
+  // 多产品列表
+  List<Product> products = [
+    Product(
+      id: 'dog_001',
+      name: 'LynShae',
+      type: ProductType.robotDog,
+      isOnline: true,
+      batteryLevel: 78,
+      isOn: true,
+    ),
+    Product(
+      id: 'cat_001',
+      name: 'MeowBot',
+      type: ProductType.robotCat,
+      isOnline: true,
+      batteryLevel: 65,
+      isOn: true,
+    ),
+    Product(
+      id: 'clock_001',
+      name: '晨曦',
+      type: ProductType.smartClock,
+      isOnline: true,
+      batteryLevel: 100,
+      isOn: true,
+    ),
+    Product(
+      id: 'lamp_001',
+      name: '护眼灯',
+      type: ProductType.smartLamp,
+      isOnline: false,
+      batteryLevel: 0,
+      isOn: false,
+    ),
+  ];
 
-  bool isScanning = false;
-  List<DeviceModel> discoveredDevices = [];
   bool isRefreshing = false;
+  int selectedProductIndex = 0;
 
   @override
   void initState() {
@@ -37,165 +117,74 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _startAutoRefresh() {
     Future.delayed(const Duration(seconds: 5), () {
-      if (mounted && device.isOnline) {
+      if (mounted) {
         setState(() {
-          device = device.copyWith(
-            batteryLevel: (device.batteryLevel - 1).clamp(0, 100),
-          );
+          products = products.map((p) {
+            if (p.isOnline && p.batteryLevel > 0) {
+              return p.copyWith(
+                batteryLevel: (p.batteryLevel - 1).clamp(0, 100),
+              );
+            }
+            return p;
+          }).toList();
         });
         _startAutoRefresh();
       }
     });
   }
 
-  Future<void> _scanDevices() async {
-    if (isScanning) return;
-    setState(() {
-      isScanning = true;
-      discoveredDevices = [];
-    });
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-    setState(() {
-      isScanning = false;
-      discoveredDevices = [
-        DeviceModel(
-          id: 'dog_002',
-          name: 'LynShae-Pro',
-          isOnline: true,
-          batteryLevel: 92,
-          mode: DeviceMode.companion,
-          macAddress: 'B5:C6:D7:E8:F9:A0',
-          firmwareVersion: 'v2.1.0',
-        ),
-      ];
-    });
-    AppUtils.vibrate();
-  }
-
-  void _togglePower() {
-    setState(() {
-      device = device.copyWith(isOnline: !device.isOnline);
-    });
-    AppUtils.vibrate();
-    if (!device.isOnline) {
-      AppUtils.showSuccess(context, '设备已关机');
+  Future<void> _handleRefresh() async {
+    setState(() => isRefreshing = true);
+    await Future.delayed(const Duration(seconds: 1));
+    if (mounted) {
+      setState(() {
+        isRefreshing = false;
+      });
+      AppUtils.showSuccess(context, '设备状态已更新');
     }
   }
 
-  void _switchMode(DeviceMode mode) {
+  void _toggleProductPower(int index) {
     setState(() {
-      device = device.copyWith(mode: mode);
+      final product = products[index];
+      products[index] = product.copyWith(
+        isOn: !product.isOn,
+        isOnline: !product.isOn,
+      );
     });
-    Navigator.pop(context);
     AppUtils.vibrate();
-    AppUtils.showSuccess(context, '已切换到${mode.displayName}');
-  }
-
-  void _showModeSelector() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 30, sigmaY: 30),
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Colors.white.withOpacity(0.1)
-                  : Colors.white.withOpacity(0.85),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(28)),
-              border: Border(
-                top: BorderSide(
-                  color: isDark
-                      ? Colors.white.withOpacity(0.15)
-                      : Colors.white.withOpacity(0.8),
-                ),
-              ),
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Theme.of(ctx)
-                        .colorScheme
-                        .onSurface
-                        .withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  '选择模式',
-                  style: TextStyle(
-                    color: Theme.of(ctx).colorScheme.onSurface,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                _buildModeOption(
-                    ctx, DeviceMode.companion, '陪伴模式', Icons.favorite_rounded),
-                _buildModeOption(
-                    ctx, DeviceMode.patrol, '巡逻模式', Icons.security_rounded),
-                _buildModeOption(ctx, DeviceMode.follow, '跟随模式',
-                    Icons.directions_walk_rounded),
-                _buildModeOption(
-                    ctx, DeviceMode.sleep, '休眠模式', Icons.bedtime_rounded),
-                const SizedBox(height: 16),
-              ],
-            ),
-          ),
-        ),
-      ),
+    AppUtils.showSuccess(
+      context,
+      '${products[index].name} ${products[index].isOn ? '已开启' : '已关闭'}',
     );
   }
 
-  Widget _buildModeOption(
-      BuildContext ctx, DeviceMode mode, String label, IconData icon) {
-    final isSelected = device.mode == mode;
-    final theme = Theme.of(ctx);
-    return ListTile(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      leading: Icon(
-        icon,
-        color: isSelected
-            ? AppTheme.primaryBlue
-            : theme.colorScheme.onSurface.withOpacity(0.5),
-        size: 26,
+  void _onProductTap(int index) {
+    setState(() {
+      selectedProductIndex = index;
+    });
+    final product = products[index];
+
+    // 导航到产品控制页面
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => ProductControlScreen(product: product),
       ),
-      title: Text(
-        label,
-        style: TextStyle(
-          color: isSelected
-              ? AppTheme.primaryBlue
-              : theme.colorScheme.onSurface,
-          fontSize: 16,
-          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        ),
-      ),
-      trailing: isSelected
-          ? const Icon(Icons.check_circle_rounded, color: AppColors.primaryBlue)
-          : null,
-      onTap: () => _switchMode(mode),
     );
   }
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: SafeArea(
         child: Column(
           children: [
-            _buildTopBar(),
+            _buildHeader(),
             Expanded(
               child: RefreshIndicator(
                 onRefresh: _handleRefresh,
@@ -206,19 +195,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      DeviceCard(
-                        device: device,
-                        onPowerToggle: _togglePower,
-                        onModeSwitch: _showModeSelector,
-                        onTap: () =>
-                            Navigator.pushNamed(context, AppRoutes.control),
-                      ),
-                      const SizedBox(height: 20),
-                      _buildQuickActions(),
-                      const SizedBox(height: 20),
-                      _buildSmartHomeSection(),
-                      const SizedBox(height: 20),
-                      _buildDeviceDiscovery(),
+                      _buildProductGrid(),
                       const SizedBox(height: 100),
                     ],
                   ),
@@ -231,83 +208,267 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Future<void> _handleRefresh() async {
-    setState(() => isRefreshing = true);
-    await Future.delayed(const Duration(seconds: 1));
-    if (mounted) {
-      setState(() {
-        device = device.copyWith(batteryLevel: 85, isOnline: true);
-        isRefreshing = false;
-      });
-      AppUtils.showSuccess(context, '设备状态已更新');
-    }
-  }
-
-  Widget _buildTopBar() {
+  Widget _buildHeader() {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 8,
-                height: 8,
-                decoration: BoxDecoration(
-                  color: device.isOnline
-                      ? AppColors.successGreen
-                      : AppColors.errorRed,
-                  shape: BoxShape.circle,
-                  boxShadow: device.isOnline
-                      ? [
-                          BoxShadow(
-                            color: AppColors.successGreen.withOpacity(0.5),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                          ),
-                        ]
-                      : null,
-                ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '灵羲',
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: theme.colorScheme.onSurface,
+                      letterSpacing: 2,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 8),
-              Text(
-                device.isOnline ? '局域网连接' : '离线',
-                style: TextStyle(
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: isDark
+                      ? Colors.white.withOpacity(0.08)
+                      : Colors.white.withOpacity(0.6),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: isDark
+                        ? Colors.white.withOpacity(0.1)
+                        : Colors.white.withOpacity(0.5),
+                  ),
+                ),
+                child: Icon(
+                  Icons.notifications_outlined,
                   color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 14,
+                  size: 22,
                 ),
               ),
             ],
           ),
-          Row(
-            children: [
-              Icon(Icons.person_outline_rounded,
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  size: 18),
-              const SizedBox(width: 4),
-              Text(
-                'Freakz3z',
-                style: TextStyle(
-                  color: theme.colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 14,
+          const SizedBox(height: 16),
+          // 在线设备统计
+          GlassContainer(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(
+                  width: 8,
+                  height: 8,
+                  decoration: BoxDecoration(
+                    color: AppTheme.successGreen,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppTheme.successGreen.withOpacity(0.5),
+                        blurRadius: 8,
+                        spreadRadius: 2,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 8),
+                Text(
+                  '${products.where((p) => p.isOnline).length}/${products.length} 设备在线',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '局域网连接',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.4),
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildProductGrid() {
     final theme = Theme.of(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '快速操作',
+          '我的设备',
+          style: TextStyle(
+            color: theme.colorScheme.onSurface,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 12),
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.85,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
+          ),
+          itemCount: products.length,
+          itemBuilder: (context, index) {
+            return _buildProductCard(index);
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProductCard(int index) {
+    final product = products[index];
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isSelected = selectedProductIndex == index;
+
+    return GestureDetector(
+      onTap: () => _onProductTap(index),
+      child: GlassContainer(
+        padding: const EdgeInsets.all(16),
+        borderColor: isSelected
+            ? product.type.color.withOpacity(0.5)
+            : Colors.white.withOpacity(isDark ? 0.1 : 0.3),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: product.type.color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    product.type.icon,
+                    color: product.type.color,
+                    size: 24,
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () => _toggleProductPower(index),
+                  child: Container(
+                    width: 36,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      color: product.isOn
+                          ? AppTheme.successGreen
+                          : theme.colorScheme.onSurface.withOpacity(0.2),
+                    ),
+                    child: AnimatedAlign(
+                      duration: const Duration(milliseconds: 200),
+                      alignment: product.isOn
+                          ? Alignment.centerRight
+                          : Alignment.centerLeft,
+                      child: Container(
+                        width: 16,
+                        height: 16,
+                        margin: const EdgeInsets.all(2),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 2,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const Spacer(),
+            Text(
+              product.name,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              product.type.name,
+              style: TextStyle(
+                color: theme.colorScheme.onSurface.withOpacity(0.5),
+                fontSize: 12,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Icon(
+                  product.batteryLevel > 20
+                      ? Icons.battery_full_rounded
+                      : Icons.battery_alert_rounded,
+                  color: product.batteryLevel > 20
+                      ? AppTheme.successGreen
+                      : AppTheme.errorRed,
+                  size: 14,
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  product.type == ProductType.smartClock ||
+                          product.type == ProductType.smartLamp
+                      ? (product.isOn ? '运行中' : '已关闭')
+                      : '${product.batteryLevel}%',
+                  style: TextStyle(
+                    color: theme.colorScheme.onSurface.withOpacity(0.5),
+                    fontSize: 11,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: product.isOnline
+                        ? AppTheme.successGreen
+                        : AppTheme.errorRed,
+                    shape: BoxShape.circle,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickActions() {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '快捷操作',
           style: TextStyle(
             color: theme.colorScheme.onSurface,
             fontSize: 18,
@@ -318,23 +479,40 @@ class _HomeScreenState extends State<HomeScreen> {
         Row(
           children: [
             _buildActionButton(
-              icon: Icons.videocam_rounded,
-              label: '实时画面',
-              onTap: () => Navigator.pushNamed(context, AppRoutes.control),
+              icon: Icons.power_settings_new_rounded,
+              label: '全部开启',
+              color: AppTheme.successGreen,
+              onTap: () {
+                setState(() {
+                  products = products.map((p) =>
+                    p.copyWith(isOn: true, isOnline: true)
+                  ).toList();
+                });
+                AppUtils.showSuccess(context, '全部设备已开启');
+              },
             ),
             const SizedBox(width: 12),
             _buildActionButton(
-              icon: Icons.mic_rounded,
-              label: '语音对话',
-              color: AppColors.accentOrange,
-              onTap: () => AppUtils.showInfo(context, '语音对话功能开发中'),
+              icon: Icons.power_off_rounded,
+              label: '全部关闭',
+              color: AppTheme.errorRed,
+              onTap: () {
+                setState(() {
+                  products = products.map((p) =>
+                    p.copyWith(isOn: false)
+                  ).toList();
+                });
+                AppUtils.showSuccess(context, '全部设备已关闭');
+              },
             ),
             const SizedBox(width: 12),
             _buildActionButton(
-              icon: Icons.favorite_rounded,
-              label: '羁绊中心',
-              color: AppColors.accentPink,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.bonding),
+              icon: Icons.add_rounded,
+              label: '添加设备',
+              color: AppTheme.primaryBlue,
+              onTap: () {
+                AppUtils.showInfo(context, '添加设备功能开发中');
+              },
             ),
           ],
         ),
@@ -346,7 +524,7 @@ class _HomeScreenState extends State<HomeScreen> {
     required IconData icon,
     required String label,
     required VoidCallback onTap,
-    Color color = AppColors.primaryBlue,
+    required Color color,
   }) {
     return Expanded(
       child: GestureDetector(
@@ -368,8 +546,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Text(
                 label,
                 style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                   fontSize: 12,
                   fontWeight: FontWeight.w500,
                 ),
@@ -381,151 +558,77 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildSmartHomeSection() {
+  Widget _buildSceneSection() {
     final theme = Theme.of(context);
+
+    final scenes = [
+      {'name': '起床模式', 'icon': Icons.wb_sunny_rounded, 'color': Color(0xFFFFD93D)},
+      {'name': '睡眠模式', 'icon': Icons.bedtime_rounded, 'color': Color(0xFF6C5CE7)},
+      {'name': '离家模式', 'icon': Icons.home_rounded, 'color': Color(0xFF00D4FF)},
+      {'name': '回家模式', 'icon': Icons.door_front_door_rounded, 'color': Color(0xFF4ADE80)},
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '智能家居联动',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextButton(
-              onPressed: () =>
-                  AppUtils.showInfo(context, '智能家居管理开发中'),
-              child: const Text('管理'),
-            ),
-          ],
+        Text(
+          '智能场景',
+          style: TextStyle(
+            color: theme.colorScheme.onSurface,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         const SizedBox(height: 12),
-        GlassContainer(
-          padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
-          child: Row(
-            children: [
-              _buildSmartDevice('客厅灯', Icons.lightbulb_outline, true),
-              _buildSmartDevice('空调', Icons.ac_unit, false),
-              _buildSmartDevice('门锁', Icons.lock_outline, true),
-            ],
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 2.5,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildSmartDevice(String name, IconData icon, bool isOn) {
-    final theme = Theme.of(context);
-    final color = isOn
-        ? AppColors.primaryBlue
-        : theme.colorScheme.onSurface.withOpacity(0.3);
-    return Expanded(
-      child: Column(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(icon, color: color, size: 24),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            name,
-            style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(isOn ? 0.9 : 0.4),
-              fontSize: 12,
-            ),
-          ),
-          Text(
-            isOn ? '开启' : '关闭',
-            style: TextStyle(
-              color: isOn
-                  ? AppColors.primaryBlue
-                  : theme.colorScheme.onSurface.withOpacity(0.3),
-              fontSize: 10,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeviceDiscovery() {
-    final theme = Theme.of(context);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '设备发现',
-              style: TextStyle(
-                color: theme.colorScheme.onSurface,
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            TextButton.icon(
-              onPressed: isScanning ? null : _scanDevices,
-              icon: isScanning
-                  ? const SizedBox(
-                      width: 16,
-                      height: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        valueColor:
-                            AlwaysStoppedAnimation(AppColors.primaryBlue),
+          itemCount: scenes.length,
+          itemBuilder: (context, index) {
+            final scene = scenes[index];
+            final color = scene['color'] as Color;
+            return GestureDetector(
+              onTap: () {
+                AppUtils.showSuccess(context, '${scene['name']}已激活');
+              },
+              child: GlassContainer(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                borderColor: color.withOpacity(0.3),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: color.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    )
-                  : const Icon(Icons.refresh_rounded, size: 18),
-              label: Text(isScanning ? '扫描中...' : '扫描'),
-            ),
-          ],
+                      child: Icon(
+                        scene['icon'] as IconData,
+                        color: color,
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      scene['name'] as String,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
         ),
-        if (discoveredDevices.isNotEmpty)
-          GlassContainer(
-            margin: const EdgeInsets.only(top: 12),
-            padding: const EdgeInsets.all(12),
-            borderColor: AppColors.primaryBlue.withOpacity(0.3),
-            child: Column(
-              children: discoveredDevices
-                  .map((d) => ListTile(
-                        leading: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: AppColors.primaryBlue.withOpacity(0.15),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: const Icon(Icons.pets,
-                              color: AppColors.primaryBlue, size: 20),
-                        ),
-                        title: Text(d.name,
-                            style: TextStyle(
-                                color: theme.colorScheme.onSurface,
-                                fontWeight: FontWeight.w600)),
-                        subtitle: Text(
-                          '电量 ${d.batteryLevel}%',
-                          style: TextStyle(
-                              color: theme.colorScheme.onSurface
-                                  .withOpacity(0.5)),
-                        ),
-                        trailing: ElevatedButton(
-                          onPressed: () => AppUtils.showSuccess(
-                              context, '正在绑定 ${d.name}'),
-                          child: const Text('绑定'),
-                        ),
-                      ))
-                  .toList(),
-            ),
-          ),
       ],
     );
   }

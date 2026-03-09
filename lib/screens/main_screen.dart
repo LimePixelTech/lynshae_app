@@ -1,10 +1,10 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../widgets/glass_container.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
-import 'bonding_screen.dart';
+import 'smart_screen.dart';
 import 'settings_screen.dart';
+import 'profile_screen.dart';
 
 /// 主屏幕 - 玻璃质感底部导航
 class MainScreen extends StatefulWidget {
@@ -19,8 +19,9 @@ class _MainScreenState extends State<MainScreen> {
 
   final List<Widget> _screens = [
     const HomeScreen(),
-    const BondingScreen(),
+    const SmartScreen(),
     const SettingsScreen(),
+    const ProfileScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -31,7 +32,10 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return GradientBackground(
+    return Container(
+      decoration: BoxDecoration(
+        gradient: AppTheme.backgroundGradient(context),
+      ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         body: IndexedStack(
@@ -55,18 +59,20 @@ class _MainScreenState extends State<MainScreen> {
             height: 72,
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.08)
-                  : Colors.white.withOpacity(0.7),
+                  ? AppTheme.glassDark
+                  : AppTheme.glassLight,
               borderRadius: BorderRadius.circular(28),
               border: Border.all(
                 color: isDark
-                    ? Colors.white.withOpacity(0.12)
-                    : Colors.white.withOpacity(0.5),
+                    ? AppTheme.glassDarkBorder
+                    : AppTheme.glassLightBorder,
                 width: 0.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.3 : 0.08),
+                  color: isDark
+                      ? Colors.black.withAlpha(80)
+                      : AppTheme.gray900.withAlpha(20),
                   blurRadius: 30,
                   spreadRadius: -5,
                 ),
@@ -77,10 +83,12 @@ class _MainScreenState extends State<MainScreen> {
               children: [
                 _buildNavItem(
                     0, Icons.home_outlined, Icons.home_rounded, '首页'),
-                _buildNavItem(1, Icons.favorite_outline,
-                    Icons.favorite_rounded, '羁绊'),
-                _buildNavItem(2, Icons.settings_outlined,
-                    Icons.settings_rounded, '设置'),
+                _buildNavItem(
+                    1, Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, '智能'),
+                _buildNavItem(
+                    2, Icons.settings_outlined, Icons.settings_rounded, '设置'),
+                _buildNavItem(
+                    3, Icons.person_outline, Icons.person_rounded, '我的'),
               ],
             ),
           ),
@@ -92,10 +100,12 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildNavItem(
       int index, IconData icon, IconData activeIcon, String label) {
     final isSelected = _selectedIndex == index;
-    final theme = Theme.of(context);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = isSelected
         ? AppTheme.primaryBlue
-        : theme.colorScheme.onSurface.withOpacity(0.4);
+        : (isDark
+            ? AppTheme.darkTextSecondary
+            : AppTheme.gray400);
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),
@@ -111,7 +121,7 @@ class _MainScreenState extends State<MainScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
                 color: isSelected
-                    ? AppTheme.primaryBlue.withOpacity(0.15)
+                    ? AppTheme.primaryBlue.withAlpha(40)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(14),
               ),

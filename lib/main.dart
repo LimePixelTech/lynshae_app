@@ -45,7 +45,7 @@ class _SmartDogAppState extends State<SmartDogApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: '智能机器狗',
+      title: 'LyShae',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
