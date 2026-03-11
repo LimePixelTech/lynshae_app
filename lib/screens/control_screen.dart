@@ -87,7 +87,7 @@ class _ControlScreenState extends State<ControlScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppTheme.primaryBlue.withOpacity(0.1),
+                      AppTheme.primaryBlue.withValues(alpha: 0.1),
                       Colors.transparent,
                     ],
                   ),
@@ -104,7 +104,7 @@ class _ControlScreenState extends State<ControlScreen> {
                   shape: BoxShape.circle,
                   gradient: RadialGradient(
                     colors: [
-                      AppTheme.accentPink.withOpacity(0.06),
+                      AppTheme.accentPink.withValues(alpha: 0.06),
                       Colors.transparent,
                     ],
                   ),
@@ -130,10 +130,10 @@ class _ControlScreenState extends State<ControlScreen> {
                   filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
                   child: Container(
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.1),
+                      color: Colors.white.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
-                          color: Colors.white.withOpacity(0.15)),
+                          color: Colors.white.withValues(alpha: 0.15)),
                     ),
                     child: IconButton(
                       onPressed: () => Navigator.pop(context),
@@ -169,7 +169,7 @@ class _ControlScreenState extends State<ControlScreen> {
           boxShadow: [
             BoxShadow(
               color: (isEmergencyStopped ? Colors.orange : Colors.red)
-                  .withOpacity(0.5),
+                  .withValues(alpha: 0.5),
               blurRadius: 20,
               spreadRadius: 2,
             ),
@@ -193,18 +193,18 @@ class _ControlScreenState extends State<ControlScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Icon(Icons.videocam_off,
-                size: 64, color: Colors.white.withOpacity(0.12)),
+              size: 64, color: Colors.white.withValues(alpha: 0.12)),
             const SizedBox(height: 16),
             Text(
               'FPV 视频流',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.2), fontSize: 18),
+                  color: Colors.white.withValues(alpha: 0.2), fontSize: 18),
             ),
             const SizedBox(height: 8),
             Text(
               '开发模式下显示模拟画面',
               style: TextStyle(
-                  color: Colors.white.withOpacity(0.12), fontSize: 12),
+                  color: Colors.white.withValues(alpha: 0.12), fontSize: 12),
             ),
           ],
         ),
@@ -258,9 +258,9 @@ class _ControlScreenState extends State<ControlScreen> {
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: Colors.white.withOpacity(0.12)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -273,7 +273,7 @@ class _ControlScreenState extends State<ControlScreen> {
                 children: [
                   Text(label,
                       style: TextStyle(
-                          color: Colors.white.withOpacity(0.5),
+                        color: Colors.white.withValues(alpha: 0.5),
                           fontSize: 9)),
                   Text(value,
                       style: TextStyle(
@@ -313,10 +313,10 @@ class _ControlScreenState extends State<ControlScreen> {
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.08),
+                    color: Colors.white.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(24),
                     border:
-                        Border.all(color: Colors.white.withOpacity(0.12)),
+                        Border.all(color: Colors.white.withValues(alpha: 0.12)),
                   ),
                   child: Column(
                     children: [
@@ -366,18 +366,18 @@ class _ControlScreenState extends State<ControlScreen> {
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
           color: isExecuting
-              ? AppTheme.primaryBlue.withOpacity(0.25)
-              : Colors.white.withOpacity(0.06),
+              ? AppTheme.primaryBlue.withValues(alpha: 0.25)
+              : Colors.white.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isExecuting
-                ? AppTheme.primaryBlue.withOpacity(0.5)
-                : Colors.white.withOpacity(0.08),
+                ? AppTheme.primaryBlue.withValues(alpha: 0.5)
+                : Colors.white.withValues(alpha: 0.08),
           ),
           boxShadow: isExecuting
               ? [
                   BoxShadow(
-                    color: AppTheme.primaryBlue.withOpacity(0.2),
+                    color: AppTheme.primaryBlue.withValues(alpha: 0.2),
                     blurRadius: 12,
                     spreadRadius: 1,
                   ),

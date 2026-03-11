@@ -31,7 +31,7 @@ class StatusIndicator extends StatelessWidget {
             boxShadow: isOnline
                 ? [
                     BoxShadow(
-                      color: color.withOpacity(0.5),
+                      color: color.withValues(alpha: 0.5),
                       blurRadius: 8,
                       spreadRadius: 2,
                     ),
@@ -44,7 +44,7 @@ class StatusIndicator extends StatelessWidget {
           Text(
             customText!,
             style: TextStyle(
-              color: theme.colorScheme.onSurface.withOpacity(0.7),
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
               fontSize: 14,
             ),
           ),

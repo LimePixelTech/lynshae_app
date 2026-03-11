@@ -50,7 +50,7 @@ class BondingProgressBar extends StatelessWidget {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: color.withOpacity(0.4),
+                          color: color.withValues(alpha: 0.4),
                           blurRadius: 8,
                           spreadRadius: -2,
                         ),
@@ -71,7 +71,7 @@ class BondingProgressBar extends StatelessWidget {
                       gradient: LinearGradient(
                         colors: [
                           Colors.transparent,
-                          Colors.white.withOpacity(0.25),
+                          Colors.white.withValues(alpha: 0.25),
                           Colors.transparent,
                         ],
                       ),

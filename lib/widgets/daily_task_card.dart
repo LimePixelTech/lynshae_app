@@ -31,11 +31,11 @@ class DailyTaskCard extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             color: isDark
-                ? Colors.white.withOpacity(isCompleted ? 0.06 : 0.08)
-                : Colors.white.withOpacity(isCompleted ? 0.55 : 0.65),
+                ? Colors.white.withValues(alpha: isCompleted ? 0.06 : 0.08)
+                : Colors.white.withValues(alpha: isCompleted ? 0.55 : 0.65),
             borderRadius: BorderRadius.circular(18),
             border: Border.all(
-              color: accentColor.withOpacity(isDark ? 0.2 : 0.25),
+              color: accentColor.withValues(alpha: isDark ? 0.2 : 0.25),
               width: 0.5,
             ),
           ),
@@ -46,7 +46,7 @@ class DailyTaskCard extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: accentColor.withOpacity(0.15),
+                  color: accentColor.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
@@ -75,7 +75,7 @@ class DailyTaskCard extends StatelessWidget {
                       task.description,
                       style: TextStyle(
                         color:
-                            theme.colorScheme.onSurface.withOpacity(0.5),
+                            theme.colorScheme.onSurface.withValues(alpha: 0.5),
                         fontSize: 12,
                       ),
                     ),
@@ -90,7 +90,7 @@ class DailyTaskCard extends StatelessWidget {
                             color: (isCompleted
                                     ? AppColors.successGreen
                                     : AppColors.warningYellow)
-                                .withOpacity(0.15),
+                                .withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Row(
@@ -124,7 +124,7 @@ class DailyTaskCard extends StatelessWidget {
                                 horizontal: 8, vertical: 3),
                             decoration: BoxDecoration(
                               color:
-                                  AppColors.successGreen.withOpacity(0.15),
+                                  AppColors.successGreen.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Row(
@@ -159,7 +159,7 @@ class DailyTaskCard extends StatelessWidget {
                     borderRadius: BorderRadius.circular(14),
                     boxShadow: [
                       BoxShadow(
-                        color: AppTheme.primaryBlue.withOpacity(0.3),
+                        color: AppTheme.primaryBlue.withValues(alpha: 0.3),
                         blurRadius: 8,
                         spreadRadius: -2,
                       ),
@@ -189,7 +189,7 @@ class DailyTaskCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: AppColors.successGreen.withOpacity(0.15),
+                    color: AppColors.successGreen.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: const Icon(Icons.check_rounded,

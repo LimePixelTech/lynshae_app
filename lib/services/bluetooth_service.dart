@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import '../models/device_model.dart';
@@ -91,13 +90,14 @@ class BluetoothService extends ChangeNotifier {
 
   /// 发送数据到设备
   Future<bool> sendData(String data) async {
-    if (_connection == null || _connection!.output == null) {
+    final connection = _connection;
+    if (connection == null) {
       return false;
     }
 
     try {
-      _connection!.output!.add(Uint8List.fromList(utf8.encode(data)));
-      await _connection!.output!.allSent;
+      connection.output.add(Uint8List.fromList(utf8.encode(data)));
+      await connection.output.allSent;
       return true;
     } catch (e) {
       debugPrint('发送数据失败：$e');

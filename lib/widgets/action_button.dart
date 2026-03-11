@@ -37,29 +37,29 @@ class ActionButton extends StatelessWidget {
               gradient: isExecuting
                   ? LinearGradient(
                       colors: [
-                        color.withOpacity(0.3),
-                        color.withOpacity(0.15),
+                        color.withValues(alpha: 0.3),
+                        color.withValues(alpha: 0.15),
                       ],
                     )
                   : null,
               color: isExecuting
                   ? null
                   : (isDark
-                      ? Colors.white.withOpacity(0.06)
-                      : Colors.white.withOpacity(0.5)),
+                      ? Colors.white.withValues(alpha: 0.06)
+                      : Colors.white.withValues(alpha: 0.5)),
               borderRadius: BorderRadius.circular(18),
               border: Border.all(
                 color: isExecuting
-                    ? color.withOpacity(0.5)
+                    ? color.withValues(alpha: 0.5)
                     : (isDark
-                        ? Colors.white.withOpacity(0.1)
-                        : Colors.white.withOpacity(0.4)),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : Colors.white.withValues(alpha: 0.4)),
                 width: isExecuting ? 1.5 : 0.5,
               ),
               boxShadow: isExecuting
                   ? [
                       BoxShadow(
-                        color: color.withOpacity(0.3),
+                        color: color.withValues(alpha: 0.3),
                         blurRadius: 15,
                         spreadRadius: -3,
                       ),
@@ -74,8 +74,8 @@ class ActionButton extends StatelessWidget {
                   height: 40,
                   decoration: BoxDecoration(
                     color: isExecuting
-                        ? Colors.white.withOpacity(0.2)
-                        : color.withOpacity(0.15),
+                        ? Colors.white.withValues(alpha: 0.2)
+                        : color.withValues(alpha: 0.15),
                     shape: BoxShape.circle,
                   ),
                   child: isExecuting
@@ -99,7 +99,7 @@ class ActionButton extends StatelessWidget {
                         : Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                          .withValues(alpha: 0.7),
                     fontSize: 12,
                     fontWeight:
                         isExecuting ? FontWeight.w600 : FontWeight.normal,
@@ -138,7 +138,7 @@ class EmergencyStopButton extends StatelessWidget {
           shape: BoxShape.circle,
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFEF4444).withOpacity(0.5),
+              color: const Color(0xFFEF4444).withValues(alpha: 0.5),
               blurRadius: 18,
               spreadRadius: 2,
             ),

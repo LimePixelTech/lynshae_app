@@ -102,11 +102,19 @@ class GlassContainer extends StatelessWidget {
     final effectiveShadow = boxShadow ?? [
       BoxShadow(
         color: isDark
-            ? Colors.black.withAlpha(80)
-            : AppTheme.gray900.withAlpha(20),
-        blurRadius: 30,
-        spreadRadius: -8,
+            ? AppTheme.accentCyan.withAlpha(20)
+            : AppTheme.primaryBlue.withAlpha(12),
+        blurRadius: isDark ? 24 : 18,
+        spreadRadius: -12,
         offset: const Offset(0, 8),
+      ),
+      BoxShadow(
+        color: isDark
+            ? AppTheme.primaryBlue.withAlpha(14)
+            : AppTheme.accentCyan.withAlpha(8),
+        blurRadius: isDark ? 34 : 24,
+        spreadRadius: -18,
+        offset: const Offset(0, 14),
       ),
     ];
 

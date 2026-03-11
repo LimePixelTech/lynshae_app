@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import 'home_screen.dart';
 import 'smart_screen.dart';
-import 'settings_screen.dart';
+import 'mall_screen.dart';
 import 'profile_screen.dart';
 
 /// 主屏幕 - 玻璃质感底部导航
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   final List<Widget> _screens = [
     const HomeScreen(),
     const SmartScreen(),
-    const SettingsScreen(),
+    const MallScreen(),
     const ProfileScreen(),
   ];
 
@@ -38,59 +38,61 @@ class _MainScreenState extends State<MainScreen> {
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
-        body: IndexedStack(
-          index: _selectedIndex,
-          children: _screens,
+        extendBody: true,
+        body: Stack(
+          children: [
+            IndexedStack(
+              index: _selectedIndex,
+              children: _screens,
+            ),
+            // 底部导航栏
+            Positioned(
+              left: 20,
+              right: 20,
+              bottom: 20,
+              child: _buildGlassNavBarContent(),
+            ),
+          ],
         ),
-        bottomNavigationBar: _buildGlassNavBar(),
       ),
     );
   }
 
-  Widget _buildGlassNavBar() {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
-          child: Container(
-            height: 72,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? AppTheme.glassDark
-                  : AppTheme.glassLight,
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: isDark
-                    ? AppTheme.glassDarkBorder
-                    : AppTheme.glassLightBorder,
-                width: 0.5,
+  Widget _buildGlassNavBarContent() {
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(28),
+      child: BackdropFilter(
+        filter: ImageFilter.blur(sigmaX: 24, sigmaY: 24),
+        child: Container(
+          height: 72,
+          decoration: BoxDecoration(
+            color: const Color(0xCC1E293B),
+            borderRadius: BorderRadius.circular(28),
+            border: Border.all(
+              color: const Color(0xFF334155),
+              width: 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(80),
+                blurRadius: 20,
+                spreadRadius: 0,
+                offset: const Offset(0, 4),
               ),
-              boxShadow: [
-                BoxShadow(
-                  color: isDark
-                      ? Colors.black.withAlpha(80)
-                      : AppTheme.gray900.withAlpha(20),
-                  blurRadius: 30,
-                  spreadRadius: -5,
-                ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildNavItem(
-                    0, Icons.home_outlined, Icons.home_rounded, '首页'),
-                _buildNavItem(
-                    1, Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, '智能'),
-                _buildNavItem(
-                    2, Icons.settings_outlined, Icons.settings_rounded, '设置'),
-                _buildNavItem(
-                    3, Icons.person_outline, Icons.person_rounded, '我的'),
-              ],
-            ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildNavItem(
+                  0, Icons.home_outlined, Icons.home_rounded, '首页'),
+              _buildNavItem(
+                  1, Icons.auto_awesome_outlined, Icons.auto_awesome_rounded, '智能'),
+              _buildNavItem(
+                  2, Icons.shopping_bag_outlined, Icons.shopping_bag_rounded, '商城'),
+              _buildNavItem(
+                  3, Icons.person_outline, Icons.person_rounded, '我的'),
+            ],
           ),
         ),
       ),
@@ -100,12 +102,9 @@ class _MainScreenState extends State<MainScreen> {
   Widget _buildNavItem(
       int index, IconData icon, IconData activeIcon, String label) {
     final isSelected = _selectedIndex == index;
-    final isDark = Theme.of(context).brightness == Brightness.dark;
     final color = isSelected
         ? AppTheme.primaryBlue
-        : (isDark
-            ? AppTheme.darkTextSecondary
-            : AppTheme.gray400);
+        : AppTheme.gray400;
 
     return GestureDetector(
       onTap: () => _onItemTapped(index),

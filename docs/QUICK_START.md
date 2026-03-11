@@ -4,6 +4,141 @@
 
 ---
 
+## 📱 在 Android 模拟器中运行（详细教程）
+
+### 步骤 1: 检查 Flutter 环境
+
+```bash
+flutter doctor
+```
+
+确保以下项目已勾选：
+- ✅ Flutter SDK
+- ✅ Android toolchain
+- ✅ Android Studio / Xcode
+
+### 步骤 2: 查看可用模拟器
+
+```bash
+flutter emulators
+```
+
+输出示例：
+```
+2 available emulators:
+
+Id                    • Name                  • Manufacturer • Platform
+apple_ios_simulator   • iOS Simulator         • Apple        • ios
+Medium_Phone_API_36.1 • Medium Phone API 36.1 • Generic      • android
+```
+
+### 步骤 3: 启动 Android 模拟器
+
+```bash
+# 启动指定模拟器（使用你的模拟器 ID）
+flutter emulators --launch Medium_Phone_API_36.1
+```
+
+**或者**在 Android Studio 中启动：
+1. 打开 Android Studio
+2. 点击 "Device Manager"
+3. 选择虚拟设备，点击启动按钮
+
+### 步骤 4: 确认模拟器已连接
+
+等待模拟器完全启动后，运行：
+
+```bash
+flutter devices
+```
+
+应该能看到类似输出：
+```
+Found 2 connected devices:
+  sdk gphone64 arm64 (mobile) • emulator-5554 • android-arm64 • Android 16 (API 36) (emulator)
+  macOS (desktop)             • macos         • darwin-arm64  • macOS 26.3 ...
+```
+
+### 步骤 5: 运行应用
+
+```bash
+# 在模拟器上运行 Flutter 应用
+flutter run -d emulator-5554
+```
+
+**常用运行选项：**
+```bash
+# 调试模式（支持热重载）
+flutter run -d emulator-5554 --debug
+
+# 发布模式（测试性能）
+flutter run -d emulator-5554 --release
+
+# 显示详细日志
+flutter run -d emulator-5554 --verbose
+```
+
+### 步骤 6: 开发快捷键
+
+应用运行后，在终端中可以使用：
+
+| 按键 | 功能 |
+|------|------|
+| `r` | 热重载（Hot Reload） |
+| `R` | 热重启（Hot Restart） |
+| `q` | 退出应用 |
+| `h` | 显示帮助 |
+
+### 常见问题
+
+#### 模拟器启动失败
+
+```bash
+# 检查模拟器状态
+flutter emulators
+
+# 如果模拟器损坏，创建新模拟器
+flutter emulators --create [--name my_emulator]
+```
+
+#### 设备未识别
+
+```bash
+# 重启 ADB 服务
+adb kill-server
+adb start-server
+
+# 重新检查设备
+flutter devices
+```
+
+#### 构建失败
+
+```bash
+# 清理并重新构建
+flutter clean
+flutter pub get
+cd android && ./gradlew clean && cd ..
+flutter run -d emulator-5554
+```
+
+#### 模拟器运行缓慢
+
+1. **启用硬件加速**：
+   - 打开 Android Studio → SDK Manager
+   - 安装 "Android Emulator Hypervisor Driver"
+
+2. **增加模拟器内存**：
+   - Device Manager → 编辑设备 → 显示高级设置
+   - 增加 RAM 到 2048 MB 或更高
+
+3. **使用冷启动**：
+   ```bash
+   flutter emulators --launch Medium_Phone_API_36.1 --cold
+   ```
+
+---
+
 ## ⚡ 最快速启动（推荐）
 
 ### 使用启动脚本

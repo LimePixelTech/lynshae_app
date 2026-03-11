@@ -1,9 +1,13 @@
-import 'dart:ui';
 import 'package:flutter/material.dart';
-import '../screens/home_screen.dart';
+import '../models/product_model.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_utils.dart';
 import '../widgets/joystick_widget.dart';
+import '../widgets/app_slider.dart';
+import '../widgets/section_title.dart';
+import '../widgets/common_widgets.dart';
+import '../widgets/action_circle_button.dart';
+import '../widgets/status_card.dart';
 
 /// 产品控制工厂页面
 /// 根据产品类型展示不同的控制界面
@@ -24,8 +28,6 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Container(
       decoration: BoxDecoration(
         gradient: AppTheme.backgroundGradient(context),
@@ -54,8 +56,6 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
         return _buildSmartLampControl();
       case ProductType.airPurifier:
         return _buildAirPurifierControl();
-      default:
-        return _buildGenericControl();
     }
   }
 
@@ -64,10 +64,10 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
     return SafeArea(
       child: Column(
         children: [
-          // FPV区域
+          // FPV 区域
           Expanded(
             flex: 2,
-            child: _buildFPVArea(),
+            child: FPVArea(),
           ),
           // 控制区域
           Expanded(
@@ -88,12 +88,36 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
                   const SizedBox(width: 20),
                   // 动作按钮
                   Expanded(
-                    child: _buildActionButtons([
-                      {'icon': Icons.pets, 'label': '握手', 'color': AppTheme.primaryBlue},
-                      {'icon': Icons.rotate_right, 'label': '转圈', 'color': AppTheme.accentOrange},
-                      {'icon': Icons.emoji_people, 'label': '坐下', 'color': AppTheme.accentPink},
-                      {'icon': Icons.directions_walk, 'label': '跟随', 'color': AppTheme.successGreen},
-                    ]),
+                    child: Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: [
+                        ActionCircleButton(
+                          icon: Icons.pets,
+                          label: '握手',
+                          color: AppTheme.primaryBlue,
+                          onTap: () => _onActionExecuted('握手'),
+                        ),
+                        ActionCircleButton(
+                          icon: Icons.rotate_right,
+                          label: '转圈',
+                          color: AppTheme.accentOrange,
+                          onTap: () => _onActionExecuted('转圈'),
+                        ),
+                        ActionCircleButton(
+                          icon: Icons.emoji_people,
+                          label: '坐下',
+                          color: AppTheme.accentPink,
+                          onTap: () => _onActionExecuted('坐下'),
+                        ),
+                        ActionCircleButton(
+                          icon: Icons.directions_walk,
+                          label: '跟随',
+                          color: AppTheme.successGreen,
+                          onTap: () => _onActionExecuted('跟随'),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
@@ -127,7 +151,7 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
         children: [
           Expanded(
             flex: 2,
-            child: _buildFPVArea(),
+            child: FPVArea(),
           ),
           Expanded(
             flex: 3,
@@ -136,17 +160,56 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
               child: Column(
                 children: [
                   // 互动动作
-                  _buildActionButtons([
-                    {'icon': Icons.pets, 'label': '蹭腿', 'color': AppTheme.primaryBlue},
-                    {'icon': Icons.music_note, 'label': '喵叫', 'color': AppTheme.accentOrange},
-                    {'icon': Icons.circle, 'label': '打滚', 'color': AppTheme.accentPink},
-                    {'icon': Icons.bed, 'label': '睡觉', 'color': AppTheme.successGreen},
-                    {'icon': Icons.toys, 'label': '追球', 'color': Color(0xFFFFD93D)},
-                    {'icon': Icons.cleaning_services, 'label': '舔毛', 'color': Color(0xFF6BCB77)},
-                  ]),
+                  Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: [
+                      ActionCircleButton(
+                        icon: Icons.pets,
+                        label: '蹭腿',
+                        color: AppTheme.primaryBlue,
+                        onTap: () => _onActionExecuted('蹭腿'),
+                      ),
+                      ActionCircleButton(
+                        icon: Icons.music_note,
+                        label: '喵叫',
+                        color: AppTheme.accentOrange,
+                        onTap: () => _onActionExecuted('喵叫'),
+                      ),
+                      ActionCircleButton(
+                        icon: Icons.circle,
+                        label: '打滚',
+                        color: AppTheme.accentPink,
+                        onTap: () => _onActionExecuted('打滚'),
+                      ),
+                      ActionCircleButton(
+                        icon: Icons.bed,
+                        label: '睡觉',
+                        color: AppTheme.successGreen,
+                        onTap: () => _onActionExecuted('睡觉'),
+                      ),
+                      ActionCircleButton(
+                        icon: Icons.toys,
+                        label: '追球',
+                        color: const Color(0xFFFFD93D),
+                        onTap: () => _onActionExecuted('追球'),
+                      ),
+                      ActionCircleButton(
+                        icon: Icons.cleaning_services,
+                        label: '舔毛',
+                        color: const Color(0xFF6BCB77),
+                        onTap: () => _onActionExecuted('舔毛'),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20),
                   // 情绪状态
-                  _buildStatusCard('情绪状态', '开心', Icons.sentiment_very_satisfied, AppTheme.successGreen),
+                  InfoCard(
+                    title: '情绪状态',
+                    value: '开心',
+                    icon: Icons.sentiment_very_satisfied,
+                    color: AppTheme.successGreen,
+                  ),
                 ],
               ),
             ),
@@ -164,15 +227,15 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
         child: Column(
           children: [
             // 时间显示
-            _buildClockDisplay(),
+            const ClockDisplay(time: '07:30', date: '2026 年 3 月 10 日 星期二'),
             const SizedBox(height: 32),
             // 闹钟设置
-            _buildSectionTitle('闹钟列表'),
+            const SimpleSectionTitle(title: '闹钟列表'),
             const SizedBox(height: 12),
             _buildAlarmList(),
             const SizedBox(height: 24),
             // 白噪音
-            _buildSectionTitle('白噪音'),
+            const SimpleSectionTitle(title: '白噪音'),
             const SizedBox(height: 12),
             _buildSoundOptions(),
           ],
@@ -189,22 +252,22 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
         child: Column(
           children: [
             // 亮度调节
-            _buildSectionTitle('亮度'),
+            const SimpleSectionTitle(title: '亮度'),
             const SizedBox(height: 12),
-            _buildBrightnessSlider(),
+            AppSlider(value: 80, onChanged: (v) {}),
             const SizedBox(height: 24),
             // 色温调节
-            _buildSectionTitle('色温'),
+            const SimpleSectionTitle(title: '色温'),
             const SizedBox(height: 12),
-            _buildColorTempSlider(),
+            AppSlider(value: 50, onChanged: (v) {}, activeColor: AppTheme.accentOrange),
             const SizedBox(height: 24),
             // 模式选择
-            _buildSectionTitle('场景模式'),
+            const SimpleSectionTitle(title: '场景模式'),
             const SizedBox(height: 12),
             _buildLightModes(),
             const SizedBox(height: 24),
             // 定时开关
-            _buildSectionTitle('定时'),
+            const SimpleSectionTitle(title: '定时'),
             const SizedBox(height: 12),
             _buildTimerSettings(),
           ],
@@ -221,15 +284,21 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
         child: Column(
           children: [
             // 空气质量
-            _buildAirQualityCard(),
+            LargeStatusCard(
+              title: '空气质量',
+              mainValue: '优',
+              subtitle: 'PM2.5: 35 μg/m³',
+              icon: Icons.air,
+              color: AppTheme.successGreen,
+            ),
             const SizedBox(height: 24),
             // 风速调节
-            _buildSectionTitle('风速'),
+            const SimpleSectionTitle(title: '风速'),
             const SizedBox(height: 12),
-            _buildFanSpeedSlider(),
+            AppSlider(value: 60, onChanged: (v) {}),
             const SizedBox(height: 24),
             // 模式选择
-            _buildSectionTitle('运行模式'),
+            const SimpleSectionTitle(title: '运行模式'),
             const SizedBox(height: 12),
             _buildPurifierModes(),
           ],
@@ -238,209 +307,8 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
     );
   }
 
-  // 通用控制界面
-  Widget _buildGenericControl() {
-    return SafeArea(
-      child: Center(
-        child: Text(
-          '${widget.product.type.name}控制界面开发中',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // FPV视频区域
-  Widget _buildFPVArea() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // 模拟视频背景
-            Container(
-              color: Colors.black.withOpacity(0.5),
-              child: Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      Icons.videocam_off,
-                      size: 48,
-                      color: Colors.white.withOpacity(0.3),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      '实时视频流',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.5),
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // 状态叠加层
-            Positioned(
-              top: 12,
-              left: 12,
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                  color: Colors.black.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 6,
-                      height: 6,
-                      decoration: const BoxDecoration(
-                        color: AppTheme.successGreen,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    Text(
-                      'LIVE',
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.9),
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // 动作按钮组
-  Widget _buildActionButtons(List<Map<String, dynamic>> actions) {
-    return Wrap(
-      spacing: 12,
-      runSpacing: 12,
-      children: actions.map((action) {
-        return GestureDetector(
-          onTap: () {
-            AppUtils.vibrate();
-            AppUtils.showSuccess(context, '执行${action['label']}');
-          },
-          child: Container(
-            width: 70,
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-            decoration: BoxDecoration(
-              color: (action['color'] as Color).withOpacity(0.15),
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: (action['color'] as Color).withOpacity(0.3),
-              ),
-            ),
-            child: Column(
-              children: [
-                Icon(
-                  action['icon'] as IconData,
-                  color: action['color'] as Color,
-                  size: 24,
-                ),
-                const SizedBox(height: 6),
-                Text(
-                  action['label'] as String,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                    fontSize: 11,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // 状态卡片
-  Widget _buildStatusCard(String title, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color.withOpacity(0.3)),
-      ),
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 28),
-          const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-                  fontSize: 12,
-                ),
-              ),
-              Text(
-                value,
-                style: TextStyle(
-                  color: color,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 时钟显示
-  Widget _buildClockDisplay() {
-    return Container(
-      padding: const EdgeInsets.all(32),
-      decoration: BoxDecoration(
-        color: AppTheme.primaryBlue.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Text(
-            '07:30',
-            style: TextStyle(
-              fontSize: 64,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.primaryBlue,
-              letterSpacing: 4,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '2026年3月10日 星期二',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
+  void _onActionExecuted(String actionName) {
+    AppUtils.showSuccess(context, '执行$actionName');
   }
 
   // 闹钟列表
@@ -453,42 +321,11 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
 
     return Column(
       children: alarms.map((alarm) {
-        return Container(
-          margin: const EdgeInsets.only(bottom: 8),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: (alarm['enabled'] as bool)
-                ? AppTheme.primaryBlue.withOpacity(0.1)
-                : Colors.grey.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Row(
-            children: [
-              Text(
-                alarm['time'] as String,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: (alarm['enabled'] as bool)
-                      ? AppTheme.primaryBlue
-                      : Colors.grey,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Text(
-                alarm['label'] as String,
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                ),
-              ),
-              const Spacer(),
-              Switch.adaptive(
-                value: alarm['enabled'] as bool,
-                onChanged: (v) {},
-                activeColor: AppTheme.primaryBlue,
-              ),
-            ],
-          ),
+        return AlarmListItem(
+          time: alarm['time'] as String,
+          label: alarm['label'] as String,
+          enabled: alarm['enabled'] as bool,
+          onChanged: (v) {},
         );
       }).toList(),
     );
@@ -496,111 +333,71 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
 
   // 白噪音选项
   Widget _buildSoundOptions() {
-    final sounds = [
-      {'icon': Icons.water, 'label': '雨声'},
-      {'icon': Icons.forest, 'label': '森林'},
-      {'icon': Icons.waves, 'label': '海浪'},
-      {'icon': Icons.local_fire_department, 'label': '篝火'},
-    ];
-
     return Row(
-      children: sounds.map((sound) {
-        return Expanded(
-          child: GestureDetector(
-            onTap: () {
-              AppUtils.showSuccess(context, '播放${sound['label']}白噪音');
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
-              ),
-              child: Column(
-                children: [
-                  Icon(sound['icon'] as IconData, color: AppTheme.primaryBlue),
-                  const SizedBox(height: 8),
-                  Text(
-                    sound['label'] as String,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // 亮度滑块
-  Widget _buildBrightnessSlider() {
-    return Slider(
-      value: 80,
-      min: 0,
-      max: 100,
-      onChanged: (v) {},
-      activeColor: AppTheme.primaryBlue,
-    );
-  }
-
-  // 色温滑块
-  Widget _buildColorTempSlider() {
-    return Slider(
-      value: 50,
-      min: 0,
-      max: 100,
-      onChanged: (v) {},
-      activeColor: AppTheme.accentOrange,
+      children: [
+        SceneButton(
+          icon: Icons.water,
+          label: '雨声',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '播放雨声白噪音'),
+        ),
+        SceneButton(
+          icon: Icons.forest,
+          label: '森林',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '播放森林白噪音'),
+        ),
+        SceneButton(
+          icon: Icons.waves,
+          label: '海浪',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '播放海浪白噪音'),
+        ),
+        SceneButton(
+          icon: Icons.local_fire_department,
+          label: '篝火',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '播放篝火白噪音'),
+        ),
+      ],
     );
   }
 
   // 灯光模式
   Widget _buildLightModes() {
-    final modes = [
-      {'icon': Icons.wb_sunny, 'label': '阅读', 'color': Color(0xFFFFD93D)},
-      {'icon': Icons.computer, 'label': '电脑', 'color': Color(0xFF00D4FF)},
-      {'icon': Icons.bedtime, 'label': '睡前', 'color': Color(0xFF6C5CE7)},
-      {'icon': Icons.auto_awesome, 'label': '娱乐', 'color': Color(0xFFFF6B6B)},
-    ];
-
     return Wrap(
       spacing: 8,
       runSpacing: 8,
-      children: modes.map((mode) {
-        return GestureDetector(
-          onTap: () {
-            AppUtils.showSuccess(context, '切换到${mode['label']}模式');
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-            decoration: BoxDecoration(
-              color: (mode['color'] as Color).withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: (mode['color'] as Color).withOpacity(0.3)),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(mode['icon'] as IconData, color: mode['color'] as Color, size: 18),
-                const SizedBox(width: 6),
-                Text(
-                  mode['label'] as String,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.8),
-                    fontSize: 13,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      }).toList(),
+      children: [
+        ModeSelectorButton(
+          label: '阅读',
+          icon: Icons.wb_sunny,
+          isSelected: false,
+          selectedColor: const Color(0xFFFFD93D),
+          onTap: () => AppUtils.showSuccess(context, '切换到阅读模式'),
+        ),
+        ModeSelectorButton(
+          label: '电脑',
+          icon: Icons.computer,
+          isSelected: false,
+          selectedColor: const Color(0xFF00D4FF),
+          onTap: () => AppUtils.showSuccess(context, '切换到电脑模式'),
+        ),
+        ModeSelectorButton(
+          label: '睡前',
+          icon: Icons.bedtime,
+          isSelected: false,
+          selectedColor: const Color(0xFF6C5CE7),
+          onTap: () => AppUtils.showSuccess(context, '切换到睡前模式'),
+        ),
+        ModeSelectorButton(
+          label: '娱乐',
+          icon: Icons.auto_awesome,
+          isSelected: false,
+          selectedColor: const Color(0xFFFF6B6B),
+          onTap: () => AppUtils.showSuccess(context, '切换到娱乐模式'),
+        ),
+      ],
     );
   }
 
@@ -608,147 +405,50 @@ class _ProductControlScreenState extends State<ProductControlScreen> {
   Widget _buildTimerSettings() {
     return Row(
       children: [
-        Expanded(
-          child: _buildTimerButton('30分钟后关闭', Icons.timer),
+        TimerButton(
+          label: '30 分钟后关闭',
+          icon: Icons.timer,
+          onTap: () => AppUtils.showSuccess(context, '30 分钟后关闭'),
         ),
         const SizedBox(width: 8),
-        Expanded(
-          child: _buildTimerButton('1小时后关闭', Icons.timer_3),
+        TimerButton(
+          label: '1 小时后关闭',
+          icon: Icons.timer_3,
+          onTap: () => AppUtils.showSuccess(context, '1 小时后关闭'),
         ),
       ],
     );
   }
 
-  Widget _buildTimerButton(String label, IconData icon) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        AppUtils.showSuccess(context, label);
-      },
-      icon: Icon(icon, size: 18),
-      label: Text(label, style: const TextStyle(fontSize: 12)),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppTheme.primaryBlue.withOpacity(0.15),
-        foregroundColor: AppTheme.primaryBlue,
-        elevation: 0,
-        padding: const EdgeInsets.symmetric(vertical: 12),
-      ),
-    );
-  }
-
-  // 空气质量卡片
-  Widget _buildAirQualityCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: AppTheme.successGreen.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: AppTheme.successGreen.withOpacity(0.3)),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.air, color: AppTheme.successGreen, size: 32),
-              const SizedBox(width: 12),
-              Text(
-                '空气质量',
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                  fontSize: 16,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            '优',
-            style: TextStyle(
-              fontSize: 48,
-              fontWeight: FontWeight.bold,
-              color: AppTheme.successGreen,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'PM2.5: 35 μg/m³',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              fontSize: 14,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // 风速滑块
-  Widget _buildFanSpeedSlider() {
-    return Slider(
-      value: 60,
-      min: 0,
-      max: 100,
-      onChanged: (v) {},
-      activeColor: AppTheme.primaryBlue,
-    );
-  }
-
   // 净化器模式
   Widget _buildPurifierModes() {
-    final modes = [
-      {'icon': Icons.auto_mode, 'label': '自动'},
-      {'icon': Icons.speed, 'label': '强力'},
-      {'icon': Icons.nights_stay, 'label': '睡眠'},
-      {'icon': Icons.timer, 'label': '定时'},
-    ];
-
     return Row(
-      children: modes.map((mode) {
-        return Expanded(
-          child: GestureDetector(
-            onTap: () {
-              AppUtils.showSuccess(context, '切换到${mode['label']}模式');
-            },
-            child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 4),
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              decoration: BoxDecoration(
-                color: AppTheme.primaryBlue.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppTheme.primaryBlue.withOpacity(0.2)),
-              ),
-              child: Column(
-                children: [
-                  Icon(mode['icon'] as IconData, color: AppTheme.primaryBlue),
-                  const SizedBox(height: 8),
-                  Text(
-                    mode['label'] as String,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  // 标题
-  Widget _buildSectionTitle(String title) {
-    return Align(
-      alignment: Alignment.centerLeft,
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.onSurface,
+      children: [
+        SceneButton(
+          icon: Icons.auto_mode,
+          label: '自动',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '切换到自动模式'),
         ),
-      ),
+        SceneButton(
+          icon: Icons.speed,
+          label: '强力',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '切换到强力模式'),
+        ),
+        SceneButton(
+          icon: Icons.nights_stay,
+          label: '睡眠',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '切换到睡眠模式'),
+        ),
+        SceneButton(
+          icon: Icons.timer,
+          label: '定时',
+          color: AppTheme.primaryBlue,
+          onTap: () => AppUtils.showSuccess(context, '切换到定时模式'),
+        ),
+      ],
     );
   }
 }

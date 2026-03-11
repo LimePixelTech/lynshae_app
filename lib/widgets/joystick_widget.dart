@@ -78,15 +78,15 @@ class _JoystickWidgetState extends State<JoystickWidget> {
               width: widget.size,
               height: widget.size,
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.06),
+                color: Colors.white.withValues(alpha: 0.06),
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: Colors.white.withOpacity(0.12),
+                  color: Colors.white.withValues(alpha: 0.12),
                   width: 1.5,
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withValues(alpha: 0.2),
                     blurRadius: 20,
                     spreadRadius: -5,
                   ),
@@ -109,7 +109,7 @@ class _JoystickWidgetState extends State<JoystickWidget> {
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: const Color(0xFF00D4FF).withOpacity(
+                          color: const Color(0xFF00D4FF).withValues(alpha:
                               _isDragging ? 0.5 : 0.3),
                           blurRadius: _isDragging ? 20 : 12,
                           spreadRadius: _isDragging ? 2 : 0,

@@ -11,6 +11,7 @@
 |------|------|---------|
 | [📖 README](../README.md) | 项目介绍和快速概览 | 所有人 |
 | [⚡ 快速开始](../QUICK_START.md) | 5 分钟快速启动项目 | 开发者 |
+| [📱 Android 模拟器启动](../QUICK_START.md#-在-android-模拟器中运行详细教程) | 详细的模拟器启动教程 | 新手开发者 |
 | [📦 部署指南](../DEPLOYMENT_GUIDE.md) | 从零开始的完整部署教程 | 新手/运维 |
 
 ### 📋 项目文档
@@ -119,6 +120,9 @@ docs/
 ---
 
 ## 🎯 常见任务
+
+### 我想在 Android 模拟器中运行
+→ 查看 [QUICK_START.md](../QUICK_START.md#-在-android-模拟器中运行详细教程)
 
 ### 我想快速运行项目
 → 查看 [QUICK_START.md](../QUICK_START.md)

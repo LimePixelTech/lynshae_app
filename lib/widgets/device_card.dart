@@ -45,18 +45,18 @@ class DeviceCard extends StatelessWidget {
           child: Container(
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.08)
-                  : Colors.white.withOpacity(0.65),
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : Colors.white.withValues(alpha: 0.65),
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: isDark
-                    ? Colors.white.withOpacity(0.12)
-                    : Colors.white.withOpacity(0.5),
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : Colors.white.withValues(alpha: 0.5),
                 width: 0.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(isDark ? 0.2 : 0.06),
+                  color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.06),
                   blurRadius: 30,
                   spreadRadius: -5,
                 ),
@@ -75,7 +75,7 @@ class DeviceCard extends StatelessWidget {
                       shape: BoxShape.circle,
                       gradient: RadialGradient(
                         colors: [
-                          AppTheme.primaryBlue.withOpacity(isDark ? 0.12 : 0.08),
+                          AppTheme.primaryBlue.withValues(alpha: isDark ? 0.12 : 0.08),
                           Colors.transparent,
                         ],
                       ),
@@ -96,10 +96,10 @@ class DeviceCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: _statusColor.withOpacity(0.15),
+                              color: _statusColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: _statusColor.withOpacity(0.3)),
+                                  color: _statusColor.withValues(alpha: 0.3)),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -114,7 +114,7 @@ class DeviceCard extends StatelessWidget {
                                         ? [
                                             BoxShadow(
                                               color: _statusColor
-                                                  .withOpacity(0.5),
+                                                  .withValues(alpha: 0.5),
                                               blurRadius: 8,
                                               spreadRadius: 1,
                                             ),
@@ -139,7 +139,7 @@ class DeviceCard extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 12, vertical: 6),
                             decoration: BoxDecoration(
-                              color: _batteryColor.withOpacity(0.15),
+                              color: _batteryColor.withValues(alpha: 0.15),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: Row(
@@ -176,17 +176,17 @@ class DeviceCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             color: isDark
-                                ? Colors.white.withOpacity(0.06)
-                                : Colors.white.withOpacity(0.5),
+                                ? Colors.white.withValues(alpha: 0.06)
+                                : Colors.white.withValues(alpha: 0.5),
                             border: Border.all(
                               color:
-                                  AppTheme.primaryBlue.withOpacity(0.3),
+                                  AppTheme.primaryBlue.withValues(alpha: 0.3),
                               width: 2,
                             ),
                             boxShadow: [
                               BoxShadow(
                                 color: AppTheme.primaryBlue
-                                    .withOpacity(isDark ? 0.15 : 0.1),
+                                    .withValues(alpha: isDark ? 0.15 : 0.1),
                                 blurRadius: 25,
                                 spreadRadius: 2,
                               ),
@@ -218,7 +218,7 @@ class DeviceCard extends StatelessWidget {
                           device.room ?? '未分配房间',
                           style: TextStyle(
                             color: theme.colorScheme.onSurface
-                                .withOpacity(0.5),
+                                .withValues(alpha: 0.5),
                             fontSize: 14,
                           ),
                         ),
@@ -259,14 +259,14 @@ class DeviceCard extends StatelessWidget {
                               color: device.isOnline
                                   ? null
                                   : (isDark
-                                      ? Colors.white.withOpacity(0.1)
-                                      : Colors.black.withOpacity(0.08)),
+                                    ? Colors.white.withValues(alpha: 0.1)
+                                    : Colors.black.withValues(alpha: 0.08)),
                               borderRadius: BorderRadius.circular(30),
                               boxShadow: device.isOnline
                                   ? [
                                       BoxShadow(
                                         color: AppTheme.primaryBlue
-                                            .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                                         blurRadius: 15,
                                         spreadRadius: 1,
                                       ),
@@ -283,7 +283,7 @@ class DeviceCard extends StatelessWidget {
                                   color: device.isOnline
                                       ? Colors.white
                                       : theme.colorScheme.onSurface
-                                          .withOpacity(0.5),
+                                          .withValues(alpha: 0.5),
                                   size: 20,
                                 ),
                                 const SizedBox(width: 8),
@@ -293,7 +293,7 @@ class DeviceCard extends StatelessWidget {
                                     color: device.isOnline
                                         ? Colors.white
                                         : theme.colorScheme.onSurface
-                                            .withOpacity(0.5),
+                                            .withValues(alpha: 0.5),
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                   ),
@@ -324,14 +324,14 @@ class DeviceCard extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppTheme.primaryBlue.withOpacity(isDark ? 0.25 : 0.2)
+              ? AppTheme.primaryBlue.withValues(alpha: isDark ? 0.25 : 0.2)
               : (isDark
-                  ? Colors.white.withOpacity(0.06)
-                  : Colors.black.withOpacity(0.04)),
+                  ? Colors.white.withValues(alpha: 0.06)
+                  : Colors.black.withValues(alpha: 0.04)),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected
-                ? AppTheme.primaryBlue.withOpacity(0.4)
+                ? AppTheme.primaryBlue.withValues(alpha: 0.4)
                 : Colors.transparent,
           ),
         ),
@@ -342,7 +342,7 @@ class DeviceCard extends StatelessWidget {
               icon,
               color: isSelected
                   ? AppTheme.primaryBlue
-                  : theme.colorScheme.onSurface.withOpacity(0.5),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
               size: 16,
             ),
             const SizedBox(width: 6),
@@ -351,7 +351,7 @@ class DeviceCard extends StatelessWidget {
               style: TextStyle(
                 color: isSelected
                     ? AppTheme.primaryBlue
-                    : theme.colorScheme.onSurface.withOpacity(0.5),
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.5),
                 fontSize: 12,
                 fontWeight:
                     isSelected ? FontWeight.w600 : FontWeight.normal,
