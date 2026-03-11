@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_utils.dart';
 import 'device_list_screen.dart';
+import '../services/cache_service.dart';
+import '../services/update_service.dart';
 
 /// 我的页面 - 用户设置与设备管理
 class ProfileScreen extends StatefulWidget {
@@ -12,9 +14,34 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  // 模拟缓存大小
-  String cacheSize = '24.5 MB';
+  String cacheSize = '计算中...';
   bool isClearingCache = false;
+  String versionInfo = 'v1.0.0';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCacheSize();
+    _loadVersionInfo();
+  }
+
+  Future<void> _loadCacheSize() async {
+    final size = await CacheService.getCacheSize();
+    if (mounted) {
+      setState(() {
+        cacheSize = CacheService.formatCacheSize(size);
+      });
+    }
+  }
+
+  Future<void> _loadVersionInfo() async {
+    final version = await UpdateService.getVersion();
+    if (mounted) {
+      setState(() {
+        versionInfo = 'v$version';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -413,10 +440,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // 检查更新卡片（在关于下方）
         const SizedBox(height: 16),
         GestureDetector(
-          onTap: () {
-            AppUtils.vibrate();
-            AppUtils.showSuccess(context, '已是最新版本');
-          },
+          onTap: _checkForUpdate,
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
             decoration: BoxDecoration(
@@ -439,11 +463,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                const Expanded(
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
+                      const Text(
                         '检查更新',
                         style: TextStyle(
                           fontSize: 16,
@@ -451,9 +475,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
-                        '当前版本 v1.0.0',
+                        '当前版本 $versionInfo',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.white30,
@@ -567,13 +591,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _clearCache() async {
     setState(() => isClearingCache = true);
-    await Future.delayed(const Duration(milliseconds: 800));
-    setState(() {
-      isClearingCache = false;
-      cacheSize = '0 KB';
-    });
+    final success = await CacheService.clearCache();
+    await Future.delayed(const Duration(milliseconds: 300));
     if (mounted) {
-      AppUtils.showSuccess(context, '缓存已清除');
+      setState(() {
+        isClearingCache = false;
+      });
+      _loadCacheSize();
+      if (success) {
+        AppUtils.showSuccess(context, '缓存已清除');
+      } else {
+        AppUtils.showError(context, '清除缓存失败');
+      }
+    }
+  }
+
+  Future<void> _checkForUpdate() async {
+    AppUtils.vibrate();
+    final result = await UpdateService.checkForUpdate();
+    if (mounted) {
+      if (result['hasUpdate']) {
+        AppUtils.showSuccess(context, '发现新版本：${result['latestVersion']}');
+      } else {
+        AppUtils.showSuccess(context, '已是最新版本');
+      }
     }
   }
 
@@ -581,7 +622,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     showAboutDialog(
       context: context,
       applicationName: '灵羲',
-      applicationVersion: 'v1.0.0',
+      applicationVersion: versionInfo,
       applicationIcon: Container(
         width: 64,
         height: 64,

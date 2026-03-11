@@ -95,10 +95,6 @@ class _HomeScreenState extends State<HomeScreen> {
       );
     });
     AppUtils.vibrate();
-    AppUtils.showSuccess(
-      context,
-      '${products[index].name} ${products[index].isOn ? '已开启' : '已关闭'}',
-    );
   }
 
   void _onProductTap(int index) {
