@@ -57,9 +57,9 @@ class MallScreen extends StatelessWidget {
         ),
         Row(
           children: [
-            _buildHeaderIcon(Icons.shopping_cart_outlined),
+            _buildHeaderIcon(Icons.notifications_outlined),
             const SizedBox(width: 12),
-            _buildHeaderIcon(Icons.message_outlined),
+            _buildHeaderIcon(Icons.shopping_cart_outlined),
           ],
         ),
       ],

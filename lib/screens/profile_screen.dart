@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_utils.dart';
 import 'device_list_screen.dart';
+import 'about_screen.dart';
+import 'user_profile_screen.dart';
+import 'permissions_screen.dart';
 import '../services/cache_service.dart';
 import '../services/update_service.dart';
 
@@ -55,6 +58,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 12),
+              // 顶部导航栏
+              _buildNavBar(context),
+              const SizedBox(height: 12),
               // 用户信息头部
               _buildUserHeader(),
               const SizedBox(height: 24),
@@ -64,11 +70,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
               // 设置列表
               _buildSettingsCard(context),
               const SizedBox(height: 16),
-              // 通用设置
-              _buildGeneralSettingsCard(context),
-              const SizedBox(height: 16),
               // 关于/其他
-              _buildAboutCard(context),
+              _buildAboutSection(context),
               const SizedBox(height: 100),
             ],
           ),
@@ -77,48 +80,112 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+  Widget _buildNavBar(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          '我的',
+          style: TextStyle(
+            fontSize: 28,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        Row(
+          children: [
+            _buildHeaderIcon(Icons.notifications_outlined),
+            const SizedBox(width: 12),
+            _buildHeaderIcon(Icons.qr_code_scanner_rounded),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeaderIcon(IconData icon) {
+    return Container(
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: Colors.white.withAlpha(20),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Icon(
+        icon,
+        color: Colors.white70,
+        size: 22,
+      ),
+    );
+  }
+
   Widget _buildUserHeader() {
     return GestureDetector(
       onTap: () {
         AppUtils.vibrate();
-        AppUtils.showSuccess(context, '个人信息编辑功能开发中');
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const UserProfileScreen()),
+        );
       },
-      child: Row(
-        children: [
-          Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: AppTheme.primaryBlue.withAlpha(30),
-            ),
-            child: const Icon(
-              Icons.person_rounded,
-              color: AppTheme.primaryBlue,
-              size: 36,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'Freakz3z',
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: const Color(0xFF1E293B),
+          borderRadius: BorderRadius.circular(24),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 64,
+              height: 64,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                gradient: LinearGradient(
+                  colors: [
+                    AppTheme.primaryBlue.withAlpha(80),
+                    AppTheme.primaryBlue.withAlpha(40),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-            ],
-          ),
-          const Spacer(),
-          Icon(
-            Icons.chevron_right_rounded,
-            color: Colors.white54,
-            size: 28,
-          ),
-        ],
+              child: const Icon(
+                Icons.person_rounded,
+                color: AppTheme.primaryBlue,
+                size: 36,
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Freakz3z',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    '点击编辑个人信息',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: Colors.white30,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: Colors.white30,
+              size: 24,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -204,312 +271,85 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Widget _buildSettingsCard(BuildContext context) {
-    final settings = [
-      {
-        'icon': Icons.notifications_outlined,
-        'title': '通知设置',
-        'subtitle': '系统通知、应用通知',
-      },
-      {
-        'icon': Icons.language_outlined,
-        'title': '语言设置',
-        'subtitle': '简体中文',
-      },
-      {
-        'icon': Icons.security_outlined,
-        'title': '账号与安全',
-        'subtitle': '密码、生物识别',
-      },
-    ];
-
     return Container(
       decoration: BoxDecoration(
         color: const Color(0xFF1E293B),
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
-        children: settings.asMap().entries.map((entry) {
-          final index = entry.key;
-          final setting = entry.value;
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () {
-                  AppUtils.vibrate();
-                  AppUtils.showSuccess(context, '${setting['title']} 功能开发中');
-                },
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          setting['icon'] as IconData,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              setting['title'] as String,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              setting['subtitle'] as String,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white30,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        color: Colors.white30,
-                        size: 20,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (index < settings.length - 1)
-                Divider(
-                  height: 1,
-                  indent: 68,
-                  endIndent: 16,
-                  color: Colors.white.withAlpha(10),
-                ),
-            ],
-          );
-        }).toList(),
-      ),
-    );
-  }
-
-  Widget _buildGeneralSettingsCard(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: GestureDetector(
-        onTap: () {
-          AppUtils.vibrate();
-          _showClearCacheDialog();
-        },
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-          child: Row(
-            children: [
-              Container(
-                width: 40,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: Colors.white.withAlpha(15),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Icon(
-                  Icons.delete_outline_rounded,
-                  color: Colors.white,
-                  size: 22,
-                ),
-              ),
-              const SizedBox(width: 16),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      '清除缓存',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
+        children: [
+          // 通知设置
+          _buildSettingsItem(
+            icon: Icons.notifications_outlined,
+            title: '通知设置',
+            subtitle: '系统通知、应用通知',
+            onTap: () => AppUtils.showSuccess(context, '通知设置 功能开发中'),
+          ),
+          _buildDivider(),
+          // 语言设置
+          _buildSettingsItem(
+            icon: Icons.language_outlined,
+            title: '语言设置',
+            subtitle: '简体中文',
+            onTap: () => AppUtils.showSuccess(context, '语言设置 功能开发中'),
+          ),
+          _buildDivider(),
+          // 系统权限管理
+          _buildSettingsItem(
+            icon: Icons.apps_outlined,
+            title: '系统权限管理',
+            subtitle: '管理应用权限',
+            onTap: () {
+              AppUtils.vibrate();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const PermissionsScreen()),
+              );
+            },
+          ),
+          _buildDivider(),
+          // 清除缓存
+          _buildSettingsItem(
+            icon: Icons.delete_outline_rounded,
+            title: '清除缓存',
+            subtitle: '释放存储空间',
+            trailing: isClearingCache
+                ? const SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlue),
                     ),
-                    SizedBox(height: 2),
-                    Text(
-                      '释放存储空间',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.white30,
-                      ),
+                  )
+                : Text(
+                    cacheSize,
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: Colors.white54,
                     ),
-                  ],
-                ),
-              ),
-              if (isClearingCache)
-                const SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppTheme.primaryBlue),
                   ),
-                )
-              else
-                Text(
-                  cacheSize,
-                  style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white54,
-                  ),
-                ),
-              const SizedBox(width: 8),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.white30,
-                size: 20,
-              ),
-            ],
+            onTap: _showClearCacheDialog,
           ),
-        ),
+        ],
       ),
     );
   }
 
-  Widget _buildAboutCard(BuildContext context) {
-    return Column(
-      children: [
-        // 关于卡片
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E293B),
-            borderRadius: BorderRadius.circular(24),
-          ),
-          child: Column(
-            children: [
-              _buildAboutItem(
-                icon: Icons.help_outline_rounded,
-                title: '帮助与反馈',
-                onTap: () => AppUtils.showSuccess(context, '帮助与反馈 功能开发中'),
-              ),
-              Divider(
-                height: 1,
-                indent: 68,
-                endIndent: 16,
-                color: Colors.white.withAlpha(10),
-              ),
-              _buildAboutItem(
-                icon: Icons.description_outlined,
-                title: '用户协议',
-                onTap: () => AppUtils.showSuccess(context, '用户协议 功能开发中'),
-              ),
-              Divider(
-                height: 1,
-                indent: 68,
-                endIndent: 16,
-                color: Colors.white.withAlpha(10),
-              ),
-              _buildAboutItem(
-                icon: Icons.privacy_tip_outlined,
-                title: '隐私政策',
-                onTap: () => AppUtils.showSuccess(context, '隐私政策 功能开发中'),
-              ),
-              Divider(
-                height: 1,
-                indent: 68,
-                endIndent: 16,
-                color: Colors.white.withAlpha(10),
-              ),
-              _buildAboutItem(
-                icon: Icons.info_outline_rounded,
-                title: '关于灵羲',
-                onTap: _showAboutDialog,
-                showArrow: false,
-              ),
-            ],
-          ),
-        ),
-        // 检查更新卡片（在关于下方）
-        const SizedBox(height: 16),
-        GestureDetector(
-          onTap: _checkForUpdate,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E293B),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withAlpha(15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Icon(
-                    Icons.system_update_outlined,
-                    color: Colors.white,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '检查更新',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '当前版本 $versionInfo',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.white30,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: Colors.white30,
-                  size: 20,
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildAboutItem({
+  Widget _buildSettingsItem({
     required IconData icon,
     required String title,
-    required VoidCallback onTap,
+    required String subtitle,
+    Widget? trailing,
+    VoidCallback? onTap,
     bool showArrow = true,
   }) {
     return GestureDetector(
       onTap: () {
         AppUtils.vibrate();
-        onTap();
+        if (onTap != null) onTap();
       },
+      behavior: HitTestBehavior.opaque,
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
         child: Row(
@@ -529,16 +369,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             const SizedBox(width: 16),
             Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Colors.white30,
+                    ),
+                  ),
+                ],
               ),
             ),
-            if (showArrow)
+            const SizedBox(width: 8),
+            if (trailing != null) trailing,
+            if (showArrow && trailing == null)
               Icon(
                 Icons.chevron_right_rounded,
                 color: Colors.white30,
@@ -546,6 +401,50 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildDivider() {
+    return Divider(
+      height: 1,
+      indent: 68,
+      endIndent: 16,
+      color: Colors.white.withAlpha(10),
+    );
+  }
+
+  Widget _buildAboutSection(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(24),
+      ),
+      child: Column(
+        children: [
+          // 关于灵羲
+          _buildSettingsItem(
+            icon: Icons.info_outline_rounded,
+            title: '关于灵羲',
+            subtitle: '用户协议、隐私政策',
+            onTap: () {
+              AppUtils.vibrate();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const AboutScreen()),
+              );
+            },
+          ),
+          _buildDivider(),
+          // 检查更新
+          _buildSettingsItem(
+            icon: Icons.system_update_outlined,
+            title: '检查更新',
+            subtitle: '当前版本 $versionInfo',
+            onTap: _checkForUpdate,
+            showArrow: true,
+          ),
+        ],
       ),
     );
   }
@@ -616,32 +515,5 @@ class _ProfileScreenState extends State<ProfileScreen> {
         AppUtils.showSuccess(context, '已是最新版本');
       }
     }
-  }
-
-  void _showAboutDialog() {
-    showAboutDialog(
-      context: context,
-      applicationName: '灵羲',
-      applicationVersion: versionInfo,
-      applicationIcon: Container(
-        width: 64,
-        height: 64,
-        decoration: BoxDecoration(
-          color: AppTheme.primaryBlue.withAlpha(30),
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: const Icon(
-          Icons.rocket_rounded,
-          color: AppTheme.primaryBlue,
-          size: 36,
-        ),
-      ),
-      children: [
-        const Text(
-          '灵羲 - 智能机器狗伴侣应用\n\n为您提供智能设备控制、实时互动、\n情感陪伴等服务。',
-          style: TextStyle(color: Colors.white70, height: 1.6),
-        ),
-      ],
-    );
   }
 }

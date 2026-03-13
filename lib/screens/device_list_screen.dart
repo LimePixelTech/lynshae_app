@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../utils/app_utils.dart';
+import '../common/components/app_navbar.dart';
 
 /// 设备列表页面
 class DeviceListScreen extends StatelessWidget {
@@ -16,43 +17,12 @@ class DeviceListScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      backgroundColor: Colors.transparent,
+      backgroundColor: AppTheme.darkSurface,
       body: SafeArea(
         child: Column(
           children: [
             // 顶部导航栏
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Navigator.pop(context),
-                    child: Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withAlpha(15),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: const Icon(
-                        Icons.chevron_left_rounded,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  const Text(
-                    '设备列表',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const AppNavbar(title: '设备列表', showNotification: false),
             // 设备列表
             Expanded(
               child: ListView.builder(

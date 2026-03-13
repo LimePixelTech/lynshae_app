@@ -95,6 +95,8 @@ class _SmartScreenState extends State<SmartScreen> {
         ),
         Row(
           children: [
+            _buildHeaderIcon(Icons.notifications_outlined),
+            const SizedBox(width: 12),
             _buildHeaderIcon(Icons.add_rounded),
           ],
         ),
