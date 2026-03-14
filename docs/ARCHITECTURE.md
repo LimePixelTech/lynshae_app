@@ -27,7 +27,7 @@
 │  ┌─────────────────────────────────────────────────┐   │
 │  │              Provider + ChangeNotifier          │   │
 │  │  - DeviceProvider (设备状态)                     │   │
-│  │  - BondingProvider (亲密度)                      │   │
+│  │  - InteractionProvider (互动系统)                 │   │
 │  │  - SettingsProvider (设置)                       │   │
 │  └─────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────┘
@@ -58,12 +58,12 @@
 #### Screens (屏幕)
 - **HomeScreen** - 设备状态监控
 - **ControlScreen** - 实时控制
-- **BondingScreen** - 亲密度养成
+- **BondingScreen** - 情感互动
 - **SettingsScreen** - 应用设置
 
 #### Widgets (组件)
 - **DeviceCard** - 设备信息卡片
-- **BondingProgressBar** - 亲密度进度条
+- **BondingProgressBar** - 互动进度条
 - **DailyTaskCard** - 日常任务卡片
 - **ModeSwitcher** - 模式切换器
 
@@ -80,10 +80,10 @@ class DeviceProvider extends ChangeNotifier {
   void updateBattery(int level);
 }
 
-// 亲密度管理
-class BondingProvider extends ChangeNotifier {
-  BondingModel _bonding;
-  
+// 互动系统管理
+class InteractionProvider extends ChangeNotifier {
+  InteractionModel _interaction;
+
   void addExperience(int exp);
   void completeTask(String taskId);
   BondingLevel get currentLevel;

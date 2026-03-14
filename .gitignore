@@ -1,58 +1,13 @@
-# Flutter/Dart
-.dart_tool/
-.flutter-plugins
-.flutter-plugins-dependencies
-.pub-cache/
-.pub/
-build/
-*.lock
+# ===========================================
+# Lynshae Project - Root Level
+# ===========================================
 
-# Android
-android/.gradle/
-android/captures/
-android/gradlew
-android/gradlew.bat
-android/local.properties
-android/key.properties
-android/app/*.keystore
-android/app/debug
-android/app/profile
-android/app/release
+# Logs
+*.log
 
-# iOS
-ios/.generated/
-ios/Flutter/.last_build_id
-ios/Flutter/App.framework
-ios/Flutter/Flutter.framework
-ios/Flutter/Flutter.podspec
-ios/Flutter/Generated.xcconfig
-ios/Flutter/ephemeral/
-ios/Pods/
-ios/*.mode1v3
-ios/*.mode2v3
-ios/*.moved-aside
-ios/*.pbxuser
-ios/*.perspectivev3
-ios/**/*sync/
-ios/.symlinks/
-ios/profile
-ios/xcuserdata/
-ios/.generated/
-
-# macOS
-macos/Flutter/ephemeral/
-macos/Pods/
-macos/.symlinks/
-macos/Flutter/GeneratedPluginRegistrant.swift
-
-# Web
-web/.dart_tool/
-
-# Linux
-linux/flutter/ephemeral/
-
-# Windows
-windows/flutter/ephemeral/
+# OS
+.DS_Store
+Thumbs.db
 
 # IDE
 .idea/
@@ -61,12 +16,74 @@ windows/flutter/ephemeral/
 *.swo
 *~
 
-# OS
-.DS_Store
-Thumbs.db
+# Environment
+.env
+.env.local
+.env.*.local
 
-# Logs
-*.log
+# Backend (root level)
+backend/node_modules/
+backend/dist/
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# ===========================================
+# Flutter App (app/ subdirectory)
+# ===========================================
+
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/.pub-cache/
+app/.pub/
+app/build/
+app/*.lock
+
+# Android
+app/android/.gradle/
+app/android/captures/
+app/android/gradlew
+app/android/gradlew.bat
+app/android/local.properties
+app/android/key.properties
+app/android/app/*.keystore
+app/android/app/debug
+app/android/app/profile
+
+# iOS
+app/ios/.generated/
+app/ios/Flutter/.last_build_id
+app/ios/Flutter/App.framework
+app/ios/Flutter/Flutter.framework
+app/ios/Flutter/Flutter.podspec
+app/ios/Flutter/Generated.xcconfig
+app/ios/Flutter/ephemeral/
+app/ios/Pods/
+app/ios/*.mode1v3
+app/ios/*.mode2v3
+app/ios/*.moved-aside
+app/ios/*.pbxuser
+app/ios/*.perspectivev3
+app/ios/**/*sync/
+app/ios/.symlinks/
+app/ios/profile
+app/ios/xcuserdata/
+app/ios/.generated/
+
+# macOS
+app/macos/Flutter/ephemeral/
+app/macos/Pods/
+app/macos/.symlinks/
+app/macos/Flutter/GeneratedPluginRegistrant.swift
+
+# Web
+app/web/.dart_tool/
+
+# Linux
+app/linux/flutter/ephemeral/
+
+# Windows
+app/windows/flutter/ephemeral/
 
 # Symbols
 app.*.symbols

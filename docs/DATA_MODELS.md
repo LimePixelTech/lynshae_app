@@ -199,12 +199,12 @@ class DeviceModel {
 
 ---
 
-## 💕 BondingModel (亲密度模型)
+## 💕 InteractionModel (互动模型)
 
 ### 类定义
 
 ```dart
-/// 亲密度等级枚举
+/// 互动等级枚举
 enum BondingLevel {
   stranger,      // 初识 (0-100)
   acquaintance,  // 熟悉 (101-300)
@@ -275,8 +275,8 @@ class Achievement {
   });
 }
 
-/// 亲密度数据模型
-class BondingModel {
+/// 互动数据模型
+class InteractionModel {
   /// 当前经验值
   final int experience;
   
@@ -301,7 +301,7 @@ class BondingModel {
   /// 连续签到天数
   final int consecutiveDays;
 
-  const BondingModel({
+  const InteractionModel({
     this.experience = 0,
     this.level = BondingLevel.stranger,
     this.tasks = const [],
@@ -313,16 +313,16 @@ class BondingModel {
   });
 
   /// 创建初始实例
-  factory BondingModel.initial() {
-    return BondingModel(
+  factory InteractionModel.initial() {
+    return InteractionModel(
       createdAt: DateTime.now(),
       updatedAt: DateTime.now(),
     );
   }
 
   /// 从 JSON 创建
-  factory BondingModel.fromJson(Map<String, dynamic> json) {
-    return BondingModel(
+  factory InteractionModel.fromJson(Map<String, dynamic> json) {
+    return InteractionModel(
       experience: json['experience'] ?? 0,
       level: BondingLevel.values.firstWhere(
         (e) => e.name == json['level'],
@@ -358,7 +358,7 @@ class BondingModel {
   }
 
   /// 复制并修改
-  BondingModel copyWith({
+  InteractionModel copyWith({
     int? experience,
     BondingLevel? level,
     List<DailyTask>? tasks,
@@ -368,7 +368,7 @@ class BondingModel {
     int? totalInteractions,
     int? consecutiveDays,
   }) {
-    return BondingModel(
+    return InteractionModel(
       experience: experience ?? this.experience,
       level: level ?? this.level,
       tasks: tasks ?? this.tasks,
@@ -381,7 +381,7 @@ class BondingModel {
   }
 
   /// 添加经验值
-  BondingModel addExperience(int exp) {
+  InteractionModel addExperience(int exp) {
     final newExp = experience + exp;
     final newLevel = _calculateLevel(newExp);
     
@@ -731,15 +731,15 @@ if (savedJson != null) {
   final device = DeviceModel.fromJson(savedJson);
 }
 
-// 保存亲密度数据
-final bonding = BondingModel.initial();
-final json = bonding.toJson();
-await StorageService.save('bonding', json);
+// 保存互动数据
+final interaction = InteractionModel.initial();
+final json = interaction.toJson();
+await StorageService.save('interaction', json);
 
-// 加载亲密度数据
-final savedJson = await StorageService.load('bonding');
+// 加载互动数据
+final savedJson = await StorageService.load('interaction');
 if (savedJson != null) {
-  final bonding = BondingModel.fromJson(savedJson);
+  final interaction = InteractionModel.fromJson(savedJson);
 }
 ```
 

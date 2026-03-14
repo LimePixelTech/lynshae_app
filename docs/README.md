@@ -1,6 +1,8 @@
-# 📚 lynshae_app 文档中心
+# 📚 灵羲 (Lynshae) 文档中心
 
-> 完整的项目文档和开发资源
+> 灵羲智能设备 - 完整的项目文档和开发资源
+
+**注意**: 本文档主要针对移动端 App，请先进入 `app/` 目录再进行开发操作。
 
 ---
 
@@ -154,19 +156,25 @@ docs/
 
 | 文档 | 版本 | 最后更新 |
 |------|------|---------|
-| README | 1.0.0 | 2026-03-04 |
-| QUICK_START | 1.0.0 | 2026-03-04 |
-| DEPLOYMENT_GUIDE | 1.0.0 | 2026-03-04 |
-| PROJECT_OVERVIEW | 1.0.0 | 2026-03-04 |
-| ARCHITECTURE | 1.0.0 | 2026-03-04 |
-| FEATURES | 1.0.0 | 2026-03-04 |
-| DEVELOPMENT_GUIDE | 1.0.0 | 2026-03-04 |
-| DATA_MODELS | 1.0.0 | 2026-03-04 |
-| BLUETOOTH_PROTOCOL | 1.0.0 | 2026-03-04 |
+| README | 1.0.0 | 2026-03-14 |
+| QUICK_START | 1.0.0 | 2026-03-14 |
+| DEPLOYMENT_GUIDE | 1.0.0 | 2026-03-14 |
+| PROJECT_OVERVIEW | 1.0.0 | 2026-03-14 |
+| ARCHITECTURE | 1.0.0 | 2026-03-14 |
+| FEATURES | 1.0.0 | 2026-03-14 |
+| DEVELOPMENT_GUIDE | 1.0.0 | 2026-03-14 |
+| DATA_MODELS | 1.0.0 | 2026-03-14 |
+| BLUETOOTH_PROTOCOL | 1.0.0 | 2026-03-14 |
 
 ---
 
 ## 🔄 文档更新记录
+
+### v2.0.0 (2026-03-14)
+- ✨ 项目重构：将 APP 内容移至 `app/` 目录
+- ✨ 更新项目主 README 说明新结构
+- ✨ 更新所有文档路径引用
+- ✨ 更新应用名称为"灵羲"
 
 ### v1.0.0 (2026-03-04)
 - ✨ 创建完整的部署指南 (DEPLOYMENT_GUIDE.md)
@@ -202,10 +210,8 @@ docs/
 
 如果文档无法解决您的问题：
 
-- 📧 **邮件**: support@lynshae.dev
-- 💬 **Discord**: [加入社区](https://discord.gg/lynshae)
-- 🐛 **Issues**: [提交问题](https://github.com/lynshae/lynshae_app/issues)
-- 📖 **GitHub Discussions**: [参与讨论](https://github.com/lynshae/lynshae_app/discussions)
+- 📧 **邮件**: support@lingxi.com
+- 🐛 **Issues**: [GitHub Issues](https://github.com/Freakz3z/lynshae_app/issues)
 
 ---
 
@@ -233,5 +239,5 @@ docs/
 <div align="center">
   <strong>📚 文档持续更新中...</strong>
   <br/>
-  <sub>最后更新：2026-03-04</sub>
+  <sub>最后更新：2026-03-14</sub>
 </div>

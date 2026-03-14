@@ -2,13 +2,16 @@
 
 > 5 分钟快速启动项目
 
+**注意**: 本文档适用于移动端 App 开发，请先进入 `app/` 目录再进行以下操作。
+
 ---
 
 ## 📱 在 Android 模拟器中运行（详细教程）
 
-### 步骤 1: 检查 Flutter 环境
+### 步骤 1: 进入 app 目录并检查 Flutter 环境
 
 ```bash
+cd app
 flutter doctor
 ```
 

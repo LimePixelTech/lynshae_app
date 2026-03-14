@@ -672,8 +672,8 @@ xcrun stapler staple "build/macos/Build/Products/Release/Smart Dog.app"
 
 ```bash
 # 使用 pkgbuild
-pkgbuild --root "build/macos/Build/Products/Release/Smart Dog.app" \
-  --identifier "com.lynshae.smartdog" \
+pkgbuild --root "build/macos/Build/Products/Release/Lynshae.app" \
+  --identifier "com.lynshae.app" \
   --version "1.0.0" \
   --install-location "/Applications" \
   "Smart Dog.pkg"
@@ -770,9 +770,9 @@ open ios/Runner.xcworkspace
 ```xml
 <!-- 确保 ios/Runner/Info.plist 包含 -->
 <key>NSBluetoothAlwaysUsageDescription</key>
-<string>需要使用蓝牙连接机器狗设备</string>
+<string>需要使用蓝牙连接智能设备</string>
 <key>NSBluetoothPeripheralUsageDescription</key>
-<string>需要使用蓝牙连接机器狗设备</string>
+<string>需要使用蓝牙连接智能设备</string>
 ```
 
 ### 问题 6: 热重载不工作
@@ -840,8 +840,8 @@ void main() async {
   
   // 预加载必要数据
   await StorageService.initialize();
-  
-  runApp(SmartDogApp());
+
+  runApp(LynshaeApp());
 }
 ```
 

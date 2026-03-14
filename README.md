@@ -1,261 +1,156 @@
-# 🏠 lynshae_app
+# 🏠 Lynshae Project
 
-[![Flutter](https://img.shields.io/badge/Flutter-3.41.3-blue.svg)](https://flutter.dev)
-[![Dart](https://img.shields.io/badge/Dart-3.11.1-blue.svg)](https://dart.dev)
-[![Platform](https://img.shields.io/badge/platform-Android%20%7C%20iOS%20%7C%20macOS-green.svg)](https://flutter.dev)
+> 灵羲 - 智能设备控制平台
 
 ---
 
-## ✨ 设计特色
+## 📁 项目结构
 
-### 🎨 液态玻璃质感 (Liquid Glass)
+本项目采用前后端分离的架构：
 
-本应用采用独特的液态玻璃设计语言，营造通透、轻盈的视觉体验：
-
-- **背景模糊** - BackdropFilter 实现毛玻璃效果
-- **半透明层级** - 精准控制透明度营造深度感
-- **细腻边框** - 0.5px 高光边框勾勒轮廓
-- **柔和阴影** - 弥散投影增强悬浮感
-- **流畅动效** - 200-300ms 缓动曲线
-
-### 🌓 双主题系统
-
-| 主题 | 特点 | 使用场景 |
-|------|------|----------|
-| **浅色模式** | 简约白灰配色，清新明亮 | 日间使用 |
-| **深色模式** | 高级深色背景，护眼舒适 | 夜间使用 |
-
----
-
-## 🧩 组件系统
-
-### 核心组件库 (lib/widgets/)
-
-| 组件 | 用途 | 特性 |
-|------|------|------|
-| **GlassContainer** | 玻璃容器 | 毛玻璃效果，自动适配主题 |
-| **AppText** | 文字组件 | 统一排版层级，自动颜色 |
-| **AppButton** | 按钮组件 | 多种类型，支持主题切换 |
-| **AppListTile** | 列表项 | 统一列表样式，支持图标 |
-| **Toast** | 轻提示 | 顶部浮现，自动消失 |
-| **Alert** | 对话框 | 多种类型，玻璃背景 |
-
-### 主题系统 (lib/theme/)
-
-```dart
-// 品牌色
-primaryBlue = Color(0xFF007AFF)      // 科技蓝
-accentOrange = Color(0xFFFF9500)     // 活力橙
-successGreen = Color(0xFF34C759)     // 成功绿
-warningYellow = Color(0xFFFFCC00)    // 警告黄
-errorRed = Color(0xFFFF3B30)         // 错误红
-
-// 深色模式专用
-darkSurface = Color(0xFF000000)      // 深色背景
-darkElevated = Color(0xFF1C1C1E)     // 深色浮层
-glassDark = Color(0x15FFFFFF)        // 深色玻璃
-
-// 浅色模式玻璃
-glassLight = Color(0x40FFFFFF)       // 浅色玻璃
+```
+lynshae_app/
+├── app/              # Flutter 移动端应用 (Android/iOS/macOS)
+├── backend/          # Node.js 后端服务 (Express + MySQL + Redis)
+├── docs/             # 项目文档
+├── scripts/          # 构建和部署脚本
+└── README.md         # 本文件
 ```
 
 ---
 
-## 📱 界面预览
+## 📱 移动端 App (app/)
 
-### 首页 (HomeScreen)
-- 设备状态卡片
-- 快捷操作按钮
-- 实时数据显示
+Flutter 跨平台移动应用，支持 Android、iOS 和 macOS。
 
-### 智能页 (SmartScreen)
-- 场景模式（起床、睡眠、离家、回家等）
-- 快捷操作（全部开启/关闭、亮度调节等）
-- 自动化规则
+### 功能特性
+- 🎮 **实时控制** - 虚拟摇杆、动作执行
+- 💕 **情感互动** - 陪伴互动、等级系统
+- 📊 **状态监控** - 电量、信号、模式
+- 🔧 **设备管理** - 配置设置、固件升级
 
-### 设置页 (SettingsScreen)
-- 主题切换
-- 消息通知
-- 语言设置
-- 账号安全
-
-### 我的页 (ProfileScreen)
-- 用户信息
-- 统计数据
-- 关于应用
-- 退出登录
-
----
-
-## 🏗️ 项目结构
-
-```
-lib/
-├── main.dart                     # 应用入口
-├── theme/
-│   └── app_theme.dart            # 主题配置（双主题系统）
-├── screens/
-│   ├── main_screen.dart          # 主屏幕（含底部导航）
-│   ├── home_screen.dart          # 首页
-│   ├── smart_screen.dart         # 智能页
-│   ├── settings_screen.dart      # 设置页
-│   └── profile_screen.dart       # 我的页
-├── widgets/
-│   ├── widgets.dart              # 组件统一导出
-│   ├── glass_container.dart      # 玻璃容器组件
-│   ├── app_text.dart             # 文字组件
-│   ├── app_button.dart           # 按钮组件
-│   ├── app_list_tile.dart        # 列表项组件
-│   ├── app_toast.dart            # Toast轻提示
-│   └── app_alert.dart            # Alert对话框
-├── utils/
-│   └── app_utils.dart            # 工具函数
-└── services/
-    └── storage_service.dart      # 存储服务
-```
-
----
-
-## 🚀 快速开始
-
-### 环境要求
-
-- Flutter >= 3.41.3
-- Dart >= 3.11.1
-- Android SDK >= 21
-- iOS >= 12.0
-
-### 安装步骤
+### 快速开始
 
 ```bash
-# 克隆项目
-git clone https://github.com/freakz3z/lynshae_app.git
-cd lynshae_app
+cd app
 
 # 获取依赖
 flutter pub get
 
 # 运行项目
 flutter run
+
+# 构建发布
+flutter build apk --release    # Android
+flutter build ios --release    # iOS
 ```
 
-### 构建发布
+### 详细文档
+- [App README](app/README.md)
+- [快速开始指南](docs/QUICK_START.md)
+- [部署指南](docs/DEPLOYMENT_GUIDE.md)
+
+---
+
+## 🔧 后端服务 (backend/)
+
+基于 Node.js + Express 的 RESTful API 服务。
+
+### 技术栈
+- **Runtime**: Node.js 18+
+- **Framework**: Express.js
+- **Database**: MySQL 8.0
+- **Cache**: Redis 7.x
+- **Deployment**: Docker + Docker Compose
+
+### 快速开始
 
 ```bash
-# Android APK
-flutter build apk --release
+cd backend
 
-# iOS
-flutter build ios --release
+# 复制环境变量
+cp .env.example .env
 
-# macOS
-flutter build macos --release
+# 一键启动所有服务
+docker-compose up -d
+
+# 查看日志
+docker-compose logs -f
+```
+
+### 详细文档
+- [后端 README](backend/README.md)
+- [API 文档](backend/docs/API.md)
+- [部署指南](backend/docs/DEPLOYMENT.md)
+
+---
+
+## 📚 文档导航
+
+| 文档 | 路径 | 描述 |
+|------|------|------|
+| 项目概述 | docs/PROJECT_OVERVIEW.md | 项目定位和功能 |
+| 架构设计 | docs/ARCHITECTURE.md | 技术架构说明 |
+| 功能特性 | docs/FEATURES.md | 详细功能列表 |
+| 开发指南 | docs/DEVELOPMENT_GUIDE.md | 开发环境和规范 |
+| 数据模型 | docs/DATA_MODELS.md | 数据模型定义 |
+
+---
+
+## 🚀 一键部署
+
+### 开发环境
+
+```bash
+# 启动后端服务
+cd backend && docker-compose up -d
+
+# 启动前端应用
+cd app && flutter run
+```
+
+### 生产环境
+
+```bash
+# 使用生产配置启动所有服务
+docker-compose -f docker-compose.prod.yml up -d
 ```
 
 ---
 
-## 🎨 设计规范
+## 📋 目录说明
 
-### 颜色使用
-
-```dart
-// 获取当前主题色
-final isDark = Theme.of(context).brightness == Brightness.dark;
-
-// 使用主题色
-AppTheme.primaryBlue           // 主色调
-AppTheme.gray800               // 深色文字（浅色模式）
-AppTheme.darkTextPrimary       // 主要文字（深色模式）
-
-// 使用玻璃色
-GlassContainer(
-  color: isDark ? AppTheme.glassDark : AppTheme.glassLight,
-  borderColor: isDark ? AppTheme.glassDarkBorder : AppTheme.glassLightBorder,
-)
-```
-
-### 文字层级
-
-| 层级 | 组件 | 字号 | 用途 |
-|------|------|------|------|
-| Display | AppTextDisplayLarge | 32 | 页面大标题 |
-| Headline | AppTextHeadline | 20 | 区块标题 |
-| Title | AppTextTitle | 17 | 卡片标题 |
-| Body | AppTextBody | 16 | 正文内容 |
-| Caption | AppTextCaption | 12 | 辅助说明 |
-| Overline | AppTextOverline | 11 | 标签文字 |
+| 目录 | 描述 |
+|------|------|
+| `app/` | Flutter 移动端应用 |
+| `backend/` | Node.js 后端服务 |
+| `docs/` | 项目文档 |
+| `scripts/` | 构建和部署脚本 |
+| `.claude/` | Claude 配置 |
+| `.git/` | Git 版本控制 |
 
 ---
 
-## 🛠️ 开发指南
+## 🛠️ 开发环境要求
 
-### 创建玻璃卡片
-
-```dart
-GlassContainer(
-  padding: const EdgeInsets.all(16),
-  borderRadius: 16,
-  child: Column(
-    children: [
-      AppTextTitle('标题'),
-      AppTextBody('内容'),
-    ],
-  ),
-)
-```
-
-### 显示 Toast 提示
-
-```dart
-// 成功提示
-Toast.success(context, '操作成功');
-
-// 错误提示
-Toast.error(context, '操作失败');
-
-// 警告提示
-Toast.warning(context, '请检查输入');
-
-// 信息提示
-Toast.info(context, '功能开发中');
-```
-
-### 显示 Alert 对话框
-
-```dart
-// 确认对话框
-final result = await AppAlert.confirm(
-  context,
-  title: '确认删除',
-  message: '确定要删除该设备吗？',
-);
-```
-
-### 振动反馈
-
-```dart
-// 轻振动
-AppUtils.vibrate();
-
-// 重振动
-AppUtils.vibrateStrong();
-```
+- **Flutter**: 3.41.3+
+- **Dart**: 3.11.1+
+- **Node.js**: 18+
+- **Docker**: 20.10+
+- **MySQL**: 8.0+ (Docker)
+- **Redis**: 7.x (Docker)
 
 ---
 
-## 🔄 更新日志
+## 📞 联系方式
 
-### v1.0.0 - 2026-03-09
+- 📧 Email: support@lingxi.com
+- 🐛 Issues: [GitHub Issues](https://github.com/freakz3z/lynshae_app/issues)
 
-**重构主题系统**
-- 新增双主题系统（浅色/深色）
-- 新增灰阶色系
-- 新增玻璃质感配色
+---
 
-**新增组件库**
-- GlassContainer - 玻璃容器
-- AppText - 文字组件
-- AppButton - 按钮组件
-- AppListTile - 列表项
-- Toast - 轻提示
-- Alert - 对话框
+<div align="center">
+  <strong>灵羲 - 让智能设备成为你生活中最贴心的伙伴</strong>
+  <br/>
+  <sub>最后更新：2026-03-14</sub>
+</div>

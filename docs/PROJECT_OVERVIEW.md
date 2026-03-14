@@ -1,26 +1,26 @@
 # 🐕 lynshae_app 项目概述
 
-> 智能机器狗配套 Flutter APP - 控制中枢、互动窗口、养成陪伴
+> 灵羲 - 智能设备控制 App - 控制中枢、互动窗口、智能陪伴
 
 ---
 
 ## 🎯 项目定位
 
-**lynshae_app** 是一款专为智能机器狗设计的移动端控制应用，提供：
+**lynshae_app** 是一款专为智能设备设计的移动端控制应用，提供：
 
 - 🎮 **实时控制** - 虚拟摇杆、动作执行
-- 💕 **亲密度养成** - 陪伴互动、等级系统
+- 💕 **情感互动** - 陪伴互动、等级系统
 - 📊 **状态监控** - 电量、信号、模式
 - 🔧 **设备管理** - 配置设置、固件升级
 
 ### 产品愿景
 
-> 让机器狗成为你生活中最贴心的智能伙伴
+> 让智能设备成为你生活中最贴心的智能伙伴
 
 ### 核心功能
 
-1. **设备连接** - 蓝牙快速配对
-2. **运动控制** - 精准运动控制
+1. **设备管理** - 多设备连接管理
+2. **智能控制** - 精准运动控制
 3. **互动养成** - 情感化互动系统
 4. **智能场景** - 自动化任务执行
 
@@ -230,7 +230,7 @@ enum DeviceMode {
 }
 ```
 
-### BondingLevel (亲密度等级)
+### BondingLevel (互动等级)
 ```dart
 enum BondingLevel {
   stranger,      // 初识 (0-100)
@@ -241,9 +241,9 @@ enum BondingLevel {
 }
 ```
 
-### DogAction (狗狗动作)
+### DeviceAction (设备动作)
 ```dart
-enum DogAction {
+enum DeviceAction {
   shake,      // 握手
   sit,        // 坐下
   rollover,   // 打滚
@@ -326,7 +326,7 @@ errorColor: Color(0xFFF44336)       // 错误红
 **原因**:
 - 蓝牙未开启
 - 权限未授予
-- 设备不在范围内
+- 设备未配对或不在范围内
 
 **解决**:
 ```dart
@@ -340,11 +340,11 @@ await Permission.bluetooth.request();
 FlutterBluetoothSerial.instance.startDiscovery();
 ```
 
-### 2. 摇杆控制无响应
+### 2. 控制无响应
 
 **原因**:
 - 蓝牙未连接
-- 设备处于休眠模式
+- 设备未连接或处于休眠模式
 - 命令格式错误
 
 **解决**:
@@ -352,7 +352,7 @@ FlutterBluetoothSerial.instance.startDiscovery();
 - 唤醒设备
 - 查看日志输出
 
-### 3. 亲密度数据丢失
+### 3. 互动数据丢失
 
 **原因**:
 - 存储权限问题
@@ -362,10 +362,10 @@ FlutterBluetoothSerial.instance.startDiscovery();
 **解决**:
 ```dart
 // 保存数据
-await StorageService.saveBondingData(data);
+await StorageService.saveInteractionData(data);
 
 // 恢复数据
-final data = await StorageService.loadBondingData();
+final data = await StorageService.loadInteractionData();
 ```
 
 ---
@@ -378,8 +378,8 @@ final data = await StorageService.loadBondingData();
 - ✅ 蓝牙服务
 - ✅ 存储服务
 - ✅ 主屏幕组件
-- ✅ UI 主题配置
-- ✅ 亲密度系统
+- ✅ UI 主题系统
+- ✅ 互动等级系统
 - ✅ 日常任务系统
 
 ### 进行中
