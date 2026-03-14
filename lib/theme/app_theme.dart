@@ -65,6 +65,54 @@ class AppTheme {
   static const Color glassDark = Color(0x15FFFFFF);
   static const Color glassDarkBorder = Color(0x20FFFFFF);
 
+  // === 灰度色阶别名（已废弃，请使用原始名称） ===
+  @Deprecated('使用 gray50 代替')
+  static const Color warmGray50 = gray50;
+  @Deprecated('使用 gray100 代替')
+  static const Color warmGray100 = gray100;
+  @Deprecated('使用 gray200 代替')
+  static const Color warmGray200 = gray200;
+  @Deprecated('使用 gray300 代替')
+  static const Color warmGray300 = gray300;
+  @Deprecated('使用 gray400 代替')
+  static const Color warmGray400 = gray400;
+  @Deprecated('使用 gray500 代替')
+  static const Color warmGray500 = gray500;
+  @Deprecated('使用 gray600 代替')
+  static const Color warmGray600 = gray600;
+  @Deprecated('使用 gray700 代替')
+  static const Color warmGray700 = gray700;
+  @Deprecated('使用 gray800 代替')
+  static const Color warmGray800 = gray800;
+  @Deprecated('使用 gray900 代替')
+  static const Color warmGray900 = gray900;
+
+  // === 暖色调品牌色别名（已废弃，请使用原始名称） ===
+  @Deprecated('使用 primaryBlue 代替')
+  static const Color primaryWarmBeige = primaryBlue;
+  @Deprecated('使用 primaryBlueDark 代替')
+  static const Color primarySoftBrown = primaryBlueDark;
+  @Deprecated('使用 accentOrange 代替')
+  static const Color accentCoral = accentOrange;
+  @Deprecated('使用 accentCyan 代替')
+  static const Color accentWarmGold = accentCyan;
+  @Deprecated('使用 accentPink 代替')
+  static const Color accentSoftPeach = accentPink;
+  @Deprecated('使用 successGreen 代替')
+  static const Color successSage = successGreen;
+  @Deprecated('使用 warningYellow 代替')
+  static const Color warningAmber = warningYellow;
+  @Deprecated('使用 errorRed 代替')
+  static const Color errorSoftRed = errorRed;
+  @Deprecated('使用 glassDark 代替')
+  static const Color glassWarmDark = glassDark;
+  @Deprecated('使用 glassLight 代替')
+  static const Color glassWarmLight = glassLight;
+  @Deprecated('使用 glassDarkBorder 代替')
+  static const Color glassWarmDarkBorder = glassDarkBorder;
+  @Deprecated('使用 glassLightBorder 代替')
+  static const Color glassWarmLightBorder = glassLightBorder;
+
   // === 米家风格渐变 ===
   static const LinearGradient miBackgroundGradient = LinearGradient(
     begin: Alignment.topCenter,

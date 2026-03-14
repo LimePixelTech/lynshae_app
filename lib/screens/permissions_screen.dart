@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../theme/app_theme.dart';
-import '../../utils/app_utils.dart';
 import '../../common/components/app_navbar.dart';
+import '../../common/components/settings_tile.dart';
+import '../../utils/permission_utils.dart';
 
 /// 系统权限管理界面
 class PermissionsScreen extends StatefulWidget {
@@ -18,39 +19,174 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
       description: '用于发现附近的智能设备和提供位置相关服务',
       granted: false,
       icon: Icons.location_on_outlined,
+      checkPermission: PermissionUtils.checkLocationPermission,
+      requestPermission: PermissionUtils.requestLocationPermission,
     ),
     '蓝牙权限': PermissionInfo(
       description: '用于连接和控制蓝牙智能设备',
       granted: false,
       icon: Icons.bluetooth_outlined,
+      checkPermission: PermissionUtils.checkBluetoothPermission,
+      requestPermission: PermissionUtils.requestBluetoothPermission,
     ),
     '相机权限': PermissionInfo(
       description: '用于扫描二维码和拍摄照片',
       granted: false,
       icon: Icons.camera_alt_outlined,
+      checkPermission: PermissionUtils.checkCameraPermission,
+      requestPermission: PermissionUtils.requestCameraPermission,
     ),
     '通知权限': PermissionInfo(
       description: '用于接收设备状态和应用通知',
       granted: false,
       icon: Icons.notifications_outlined,
+      checkPermission: PermissionUtils.checkNotificationPermission,
+      requestPermission: PermissionUtils.requestNotificationPermission,
     ),
     '存储权限': PermissionInfo(
       description: '用于保存设备配置和用户数据',
       granted: false,
       icon: Icons.storage_outlined,
+      checkPermission: PermissionUtils.checkStoragePermission,
+      requestPermission: PermissionUtils.requestStoragePermission,
     ),
     '麦克风权限': PermissionInfo(
       description: '用于语音控制和语音互动功能',
       granted: false,
       icon: Icons.mic_outlined,
+      checkPermission: PermissionUtils.checkMicrophonePermission,
+      requestPermission: PermissionUtils.requestMicrophonePermission,
     ),
   };
 
-  void _togglePermission(String name) {
-    setState(() {
-      _permissions[name]!.granted = !_permissions[name]!.granted;
-    });
-    AppUtils.vibrate();
+  @override
+  void initState() {
+    super.initState();
+    _checkAllPermissions();
+  }
+
+  /// 检查所有权限状态
+  Future<void> _checkAllPermissions() async {
+    for (final entry in _permissions.entries) {
+      final info = entry.value;
+      final granted = await info.checkPermission();
+      if (mounted) {
+        setState(() {
+          info.granted = granted;
+        });
+      }
+    }
+  }
+
+  Future<void> _requestPermission(String name) async {
+    final info = _permissions[name]!;
+
+    if (info.granted) {
+      // 已授权，提示用户已在设置中管理
+      _showPermissionSettingsDialog(name);
+      return;
+    }
+
+    try {
+      final granted = await info.requestPermission();
+
+      if (mounted) {
+        setState(() {
+          info.granted = granted;
+        });
+
+        if (!granted) {
+          _showPermissionDeniedDialog(name);
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        _showErrorDialog(name, e.toString());
+      }
+    }
+  }
+
+  void _showPermissionSettingsDialog(String name) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: Text(
+          '$name 已授权',
+          style: const TextStyle(color: Colors.white),
+        ),
+        content: const Text(
+          '如需修改权限设置，请前往系统应用设置',
+          style: TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消', style: TextStyle(color: Colors.white70)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await PermissionUtils.openAppSettings();
+            },
+            child: const Text('去设置', style: TextStyle(color: AppTheme.primaryBlue)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showPermissionDeniedDialog(String name) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text(
+          '权限被拒绝',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          '$name 已被拒绝，部分功能可能无法使用。',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('确定', style: TextStyle(color: Colors.white70)),
+          ),
+          TextButton(
+            onPressed: () async {
+              Navigator.pop(context);
+              await PermissionUtils.openAppSettings();
+            },
+            child: const Text('去设置', style: TextStyle(color: AppTheme.primaryBlue)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showErrorDialog(String name, String error) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF1E293B),
+        title: const Text(
+          '请求失败',
+          style: TextStyle(color: Colors.white),
+        ),
+        content: Text(
+          '请求 $name 时发生错误：$error',
+          style: const TextStyle(color: Colors.white70),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('确定', style: TextStyle(color: Colors.white70)),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -65,7 +201,7 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
             // 权限列表
             Expanded(
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 child: _buildPermissionsCard(),
               ),
             ),
@@ -76,109 +212,27 @@ class _PermissionsScreenState extends State<PermissionsScreen> {
   }
 
   Widget _buildPermissionsCard() {
-    return Container(
-      decoration: BoxDecoration(
-        color: const Color(0xFF1E293B),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: _permissions.entries.map((entry) {
-          final name = entry.key;
-          final info = entry.value;
-          final isLast = entry.key == _permissions.keys.last;
+    return SettingsCard(
+      children: _permissions.entries.map((entry) {
+        final name = entry.key;
+        final info = entry.value;
+        final isLast = entry.key == _permissions.keys.last;
 
-          return Column(
-            children: [
-              GestureDetector(
-                onTap: () => _togglePermission(name),
-                behavior: HitTestBehavior.opaque,
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 40,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white.withAlpha(15),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          info.icon,
-                          color: info.granted ? AppTheme.primaryBlue : Colors.white,
-                          size: 22,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              name,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w500,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              info.description,
-                              style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.white30,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // 开关
-                      Container(
-                        width: 52,
-                        height: 32,
-                        decoration: BoxDecoration(
-                          color: info.granted
-                              ? AppTheme.primaryBlue.withAlpha(80)
-                              : Colors.white.withAlpha(20),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Stack(
-                          children: [
-                            AnimatedPositioned(
-                              duration: const Duration(milliseconds: 200),
-                              left: info.granted ? 24 : 4,
-                              top: 4,
-                              child: Container(
-                                width: 24,
-                                height: 24,
-                                decoration: BoxDecoration(
-                                  color: info.granted
-                                      ? AppTheme.primaryBlue
-                                      : Colors.white54,
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              if (!isLast)
-                Divider(
-                  height: 1,
-                  indent: 68,
-                  endIndent: 16,
-                  color: Colors.white.withAlpha(10),
-                ),
-            ],
-          );
-        }).toList(),
-      ),
+        return SettingsTile(
+          icon: info.icon,
+          iconBackgroundColor: info.granted
+              ? AppTheme.primaryBlue.withAlpha(40)
+              : Colors.white.withAlpha(15),
+          iconColor: info.granted ? AppTheme.primaryBlue : Colors.white,
+          title: name,
+          subtitle: info.description,
+          showSwitch: true,
+          switchValue: info.granted,
+          onSwitchChanged: (value) => _requestPermission(name),
+          showArrow: false,
+          showDivider: !isLast,
+        );
+      }).toList(),
     );
   }
 }
@@ -187,10 +241,14 @@ class PermissionInfo {
   final String description;
   bool granted;
   final IconData icon;
+  final Future<bool> Function() checkPermission;
+  final Future<bool> Function() requestPermission;
 
   PermissionInfo({
     required this.description,
     required this.granted,
     required this.icon,
+    required this.checkPermission,
+    required this.requestPermission,
   });
 }

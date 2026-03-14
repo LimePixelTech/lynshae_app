@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../theme/app_theme.dart';
 
 /// 通用设置项组件
 ///
-/// 用于构建设置列表中的单个项目，支持图标、标题、副标题、右箭头等
+/// 用于构建设置列表中的单个项目，支持图标、标题、副标题、右箭头、Switch 等
 ///
 /// 使用示例：
 /// ```dart
@@ -23,6 +24,12 @@ class SettingsTile extends StatelessWidget {
   /// 图标颜色（可选，默认白色）
   final Color? iconColor;
 
+  /// 图标尺寸（可选，默认 22）
+  final double? iconSize;
+
+  /// 图标容器尺寸（可选，默认 40）
+  final double? iconContainerSize;
+
   /// 主标题
   final String title;
 
@@ -31,6 +38,15 @@ class SettingsTile extends StatelessWidget {
 
   /// 右侧自定义内容（可选，如 Switch、Text 等）
   final Widget? trailing;
+
+  /// 是否显示 Switch（可选）
+  final bool showSwitch;
+
+  /// Switch 初始值（可选）
+  final bool? switchValue;
+
+  /// Switch 变化回调（可选）
+  final Function(bool)? onSwitchChanged;
 
   /// 是否显示右箭头（默认 true，当有 onTap 时）
   final bool showArrow;
@@ -44,18 +60,27 @@ class SettingsTile extends StatelessWidget {
   /// 分割线缩进（默认 68）
   final double? dividerIndent;
 
+  /// 垂直内边距（默认 16）
+  final double? verticalPadding;
+
   const SettingsTile({
     super.key,
     required this.icon,
     this.iconBackgroundColor,
     this.iconColor,
+    this.iconSize,
+    this.iconContainerSize,
     required this.title,
     this.subtitle,
     this.trailing,
+    this.showSwitch = false,
+    this.switchValue,
+    this.onSwitchChanged,
     this.showArrow = true,
     this.onTap,
     this.showDivider = true,
     this.dividerIndent,
+    this.verticalPadding,
   });
 
   @override
@@ -70,13 +95,16 @@ class SettingsTile extends StatelessWidget {
           },
           behavior: HitTestBehavior.opaque,
           child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+            padding: EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: verticalPadding ?? 16,
+            ),
             child: Row(
               children: [
                 // 左侧图标容器
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: iconContainerSize ?? 40,
+                  height: iconContainerSize ?? 40,
                   decoration: BoxDecoration(
                     color: iconBackgroundColor ?? Colors.white.withAlpha(15),
                     borderRadius: BorderRadius.circular(12),
@@ -84,7 +112,7 @@ class SettingsTile extends StatelessWidget {
                   child: Icon(
                     icon,
                     color: iconColor ?? Colors.white,
-                    size: 22,
+                    size: iconSize ?? 22,
                   ),
                 ),
                 const SizedBox(width: 16),
@@ -117,8 +145,14 @@ class SettingsTile extends StatelessWidget {
                 const SizedBox(width: 8),
                 // 右侧自定义内容
                 if (trailing != null) trailing!,
+                // Switch
+                if (showSwitch && onSwitchChanged != null)
+                  _buildSwitch(switchValue ?? false, onSwitchChanged!),
                 // 右箭头
-                if (showArrow && onTap != null && trailing == null)
+                if (showArrow &&
+                    onTap != null &&
+                    trailing == null &&
+                    !showSwitch)
                   Icon(
                     Icons.chevron_right_rounded,
                     color: Colors.white30,
@@ -137,6 +171,40 @@ class SettingsTile extends StatelessWidget {
             color: Colors.white.withAlpha(10),
           ),
       ],
+    );
+  }
+
+  Widget _buildSwitch(bool value, Function(bool) onChanged) {
+    return GestureDetector(
+      onTap: () => onChanged(!value),
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 52,
+        height: 32,
+        decoration: BoxDecoration(
+          color: value
+              ? AppTheme.primaryBlue.withAlpha(80)
+              : Colors.white.withAlpha(20),
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              left: value ? 24 : 4,
+              top: 4,
+              child: Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: value ? AppTheme.primaryBlue : Colors.white54,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
@@ -176,7 +244,7 @@ class SettingsCard extends StatelessWidget {
       final isLast = index == children.length - 1;
 
       if (isLast && child is SettingsTile) {
-        // 如果是最后一个，移除分割线
+        // 如果是最后一个，移除分割线但保留所有其他属性
         return SettingsTile(
           icon: child.icon,
           title: child.title,
@@ -185,9 +253,15 @@ class SettingsCard extends StatelessWidget {
           showArrow: child.showArrow,
           onTap: child.onTap,
           showDivider: false,
+          showSwitch: child.showSwitch,
+          switchValue: child.switchValue,
+          onSwitchChanged: child.onSwitchChanged,
           dividerIndent: child.dividerIndent,
           iconBackgroundColor: child.iconBackgroundColor,
           iconColor: child.iconColor,
+          iconSize: child.iconSize,
+          iconContainerSize: child.iconContainerSize,
+          verticalPadding: child.verticalPadding,
         );
       }
       return child;

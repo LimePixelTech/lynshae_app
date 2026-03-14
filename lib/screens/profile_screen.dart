@@ -5,6 +5,8 @@ import 'device_list_screen.dart';
 import 'about_screen.dart';
 import 'user_profile_screen.dart';
 import 'permissions_screen.dart';
+import 'notification_settings_screen.dart';
+import 'check_update_screen.dart';
 import '../services/cache_service.dart';
 import '../services/update_service.dart';
 
@@ -283,7 +285,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             icon: Icons.notifications_outlined,
             title: '通知设置',
             subtitle: '系统通知、应用通知',
-            onTap: () => AppUtils.showSuccess(context, '通知设置 功能开发中'),
+            onTap: () {
+              AppUtils.vibrate();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const NotificationSettingsScreen()),
+              );
+            },
           ),
           _buildDivider(),
           // 语言设置
@@ -440,9 +448,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _buildSettingsItem(
             icon: Icons.system_update_outlined,
             title: '检查更新',
-            subtitle: '当前版本 $versionInfo',
-            onTap: _checkForUpdate,
-            showArrow: true,
+            subtitle: 'APP 版本、设备固件',
+            onTap: () {
+              AppUtils.vibrate();
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const CheckUpdateScreen()),
+              );
+            },
           ),
         ],
       ),
@@ -501,18 +514,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         AppUtils.showSuccess(context, '缓存已清除');
       } else {
         AppUtils.showError(context, '清除缓存失败');
-      }
-    }
-  }
-
-  Future<void> _checkForUpdate() async {
-    AppUtils.vibrate();
-    final result = await UpdateService.checkForUpdate();
-    if (mounted) {
-      if (result['hasUpdate']) {
-        AppUtils.showSuccess(context, '发现新版本：${result['latestVersion']}');
-      } else {
-        AppUtils.showSuccess(context, '已是最新版本');
       }
     }
   }

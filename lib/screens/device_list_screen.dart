@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../theme/app_theme.dart';
-import '../utils/app_utils.dart';
-import '../common/components/app_navbar.dart';
+import '../../theme/app_theme.dart';
+import '../../utils/app_utils.dart';
+import '../../common/components/app_navbar.dart';
+import '../../common/components/settings_tile.dart';
 
 /// 设备列表页面
 class DeviceListScreen extends StatelessWidget {
@@ -26,97 +27,61 @@ class DeviceListScreen extends StatelessWidget {
             // 设备列表
             Expanded(
               child: ListView.builder(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                 itemCount: devices.length,
                 itemBuilder: (context, index) {
                   final device = devices[index];
-                  return Container(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF1E293B),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: GestureDetector(
-                      onTap: () {
-                        AppUtils.vibrate();
-                        AppUtils.showSuccess(context, '查看 ${device['name']}');
-                      },
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Row(
-                          children: [
-                            Container(
-                              width: 56,
-                              height: 56,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withAlpha(15),
-                                borderRadius: BorderRadius.circular(16),
-                              ),
-                              child: Icon(
-                                device['icon'] as IconData,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    device['name'] as String,
-                                    style: const TextStyle(
-                                      fontSize: 17,
-                                      fontWeight: FontWeight.w600,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 4),
-                                  Text(
-                                    device['type'] as String,
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.white30,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                              decoration: BoxDecoration(
-                                color: device['status'] == '在线'
-                                    ? AppTheme.successGreen.withAlpha(30)
-                                    : Colors.white.withAlpha(10),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: Text(
-                                device['status'] as String,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: device['status'] == '在线'
-                                      ? AppTheme.successGreen
-                                      : Colors.white30,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Icon(
-                              Icons.chevron_right_rounded,
-                              color: Colors.white30,
-                              size: 24,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  );
+                  return DeviceListScreen._buildDeviceCard(device, context);
                 },
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  static Widget _buildDeviceCard(Map<String, dynamic> device, BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1E293B),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: SettingsCard(
+        children: [
+          SettingsTile(
+            icon: device['icon'] as IconData,
+            iconContainerSize: 56,
+            iconSize: 28,
+            title: device['name'] as String,
+            subtitle: device['type'] as String,
+            trailing: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: device['status'] == '在线'
+                    ? AppTheme.successGreen.withAlpha(30)
+                    : Colors.white.withAlpha(10),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                device['status'] as String,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w500,
+                  color: device['status'] == '在线'
+                      ? AppTheme.successGreen
+                      : Colors.white30,
+                ),
+              ),
+            ),
+            onTap: () {
+              AppUtils.vibrate();
+              AppUtils.showSuccess(context, '查看 ${device['name']}');
+            },
+            showDivider: false,
+          ),
+        ],
       ),
     );
   }

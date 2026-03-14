@@ -574,7 +574,7 @@ class _BottomSheetWrapper extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: isDark
                         ? AppTheme.darkTextSecondary.withAlpha(100)
-                        : AppTheme.gray300,
+                              : AppTheme.gray300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),

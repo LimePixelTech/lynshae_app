@@ -20,21 +20,27 @@ class _AboutScreenState extends State<AboutScreen> {
     return Scaffold(
       backgroundColor: AppTheme.darkSurface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // 顶部导航栏
-              const AppNavbar(title: '关于灵羲', showNotification: false),
-              const SizedBox(height: 32),
-              // Logo 和名称
-              _buildLogoSection(),
-              const SizedBox(height: 24),
-              // 设置卡片
-              _buildSettingsCard(),
-            ],
-          ),
+        child: Column(
+          children: [
+            // 顶部导航栏
+            const AppNavbar(title: '关于灵羲', showNotification: false),
+            // 内容区域
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  children: [
+                    // Logo 和名称
+                    _buildLogoSection(),
+                    const SizedBox(height: 24),
+                    // 设置卡片
+                    _buildSettingsCard(),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -166,7 +172,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 // 内容区域
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     child: Container(
                       padding: const EdgeInsets.all(20),
                       decoration: BoxDecoration(

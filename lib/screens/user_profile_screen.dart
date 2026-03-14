@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../theme/app_theme.dart';
-import '../../utils/app_utils.dart';
+import '../theme/app_theme.dart';
+import '../utils/app_utils.dart';
 import '../../common/components/app_navbar.dart';
+import '../../common/components/settings_tile.dart';
 
 /// 用户信息查看和编辑界面
 class UserProfileScreen extends StatefulWidget {
@@ -37,38 +38,45 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
     return Scaffold(
       backgroundColor: AppTheme.darkSurface,
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          child: Column(
-            children: [
-              // 顶部导航栏
-              AppNavbar(
-                title: '个人信息',
-                showNotification: false,
-                trailing: GestureDetector(
-                  onTap: _toggleEditMode,
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: AppTheme.primaryBlue.withAlpha(30),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      _isEditing ? '完成' : '编辑',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppTheme.primaryBlue,
-                      ),
+        child: Column(
+          children: [
+            // 顶部导航栏
+            AppNavbar(
+              title: '个人信息',
+              showNotification: false,
+              trailing: GestureDetector(
+                onTap: _toggleEditMode,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppTheme.primaryBlue.withAlpha(30),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _isEditing ? '完成' : '编辑',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppTheme.primaryBlue,
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 32),
-              // 用户信息内容
-              _buildUserProfile(),
-            ],
-          ),
+            ),
+            // 用户信息内容
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    _buildUserProfile(),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -130,108 +138,49 @@ class _UserProfileScreenState extends State<UserProfileScreen> {
           ],
           const SizedBox(height: 32),
           // 信息卡片
-          Container(
-            decoration: BoxDecoration(
-              color: const Color(0xFF1E293B),
-              borderRadius: BorderRadius.circular(24),
-            ),
-            child: Column(
-              children: [
-                _buildInfoItem(
-                  icon: Icons.edit_rounded,
-                  title: '昵称',
-                  value: _nickname,
-                  onTap: _isEditing ? _editNickname : null,
+          SettingsCard(
+            children: [
+              SettingsTile(
+                icon: Icons.edit_rounded,
+                title: '昵称',
+                trailing: Text(
+                  _nickname,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white54,
+                  ),
                 ),
-                Divider(
-                  height: 1,
-                  indent: 68,
-                  endIndent: 16,
-                  color: Colors.white.withAlpha(10),
-                ),
-                _buildInfoItem(
-                  icon: Icons.phone_outlined,
-                  title: '手机号',
-                  value: '138****8888',
-                  onTap: null,
-                ),
-                Divider(
-                  height: 1,
-                  indent: 68,
-                  endIndent: 16,
-                  color: Colors.white.withAlpha(10),
-                ),
-                _buildInfoItem(
-                  icon: Icons.calendar_today_outlined,
-                  title: '注册时间',
-                  value: '2024-01-01',
-                  onTap: null,
-                  showArrow: false,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInfoItem({
-    required IconData icon,
-    required String title,
-    required String value,
-    VoidCallback? onTap,
-    bool showArrow = true,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      behavior: onTap != null ? HitTestBehavior.opaque : HitTestBehavior.deferToChild,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-        child: Row(
-          children: [
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: Colors.white.withAlpha(15),
-                borderRadius: BorderRadius.circular(12),
+                onTap: _isEditing ? _editNickname : null,
+                showArrow: _isEditing,
               ),
-              child: Icon(
-                icon,
-                color: Colors.white,
-                size: 22,
-              ),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
+              SettingsTile(
+                icon: Icons.phone_outlined,
+                title: '手机号',
+                trailing: const Text(
+                  '138****8888',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white54,
+                  ),
                 ),
+                showArrow: false,
               ),
-            ),
-            const SizedBox(width: 8),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.white54,
-              ),
-            ),
-            if (showArrow && onTap != null) ...[
-              const SizedBox(width: 4),
-              Icon(
-                Icons.chevron_right_rounded,
-                color: Colors.white30,
-                size: 20,
+              SettingsTile(
+                icon: Icons.calendar_today_outlined,
+                title: '注册时间',
+                trailing: const Text(
+                  '2024-01-01',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.white54,
+                  ),
+                ),
+                showArrow: false,
+                showDivider: false,
               ),
             ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

@@ -44,13 +44,35 @@ class AppConstants {
 }
 
 /// 品牌色常量 (不随主题变化)
+/// @Deprecated: 使用 AppTheme 中的颜色代替
 class AppColors {
-  static const Color primaryBlue = Color(0xFF00D4FF);
-  static const Color accentOrange = Color(0xFFFF6B35);
-  static const Color accentPink = Color(0xFFFF4081);
-  static const Color successGreen = Color(0xFF4ADE80);
-  static const Color warningYellow = Color(0xFFFBBF24);
-  static const Color errorRed = Color(0xFFEF4444);
+  // 蓝色调品牌色
+  static const Color primaryBlue = Color(0xFF3B7CFF);       // 主蓝色
+  static const Color primaryBlueDark = Color(0xFF2A5FCC);   // 深蓝色
+  static const Color accentOrange = Color(0xFFFF6B35);      // 橙色
+  static const Color accentCyan = Color(0xFF00C6FF);        // 青色
+  static const Color accentPink = Color(0xFFFF4081);        // 粉色
+  static const Color successGreen = Color(0xFF34D399);      // 绿色
+  static const Color warningYellow = Color(0xFFFBBF24);     // 黄色
+  static const Color errorRed = Color(0xFFEF4444);          // 红色
+
+  // 暖色调别名（已废弃，请使用上方原始名称）
+  @Deprecated('使用 primaryBlue 代替')
+  static const Color primaryWarmBeige = primaryBlue;
+  @Deprecated('使用 primaryBlueDark 代替')
+  static const Color primarySoftBrown = primaryBlueDark;
+  @Deprecated('使用 accentOrange 代替')
+  static const Color accentCoral = accentOrange;
+  @Deprecated('使用 accentCyan 代替')
+  static const Color accentWarmGold = accentCyan;
+  @Deprecated('使用 accentPink 代替')
+  static const Color accentSoftPeach = accentPink;
+  @Deprecated('使用 successGreen 代替')
+  static const Color successSage = successGreen;
+  @Deprecated('使用 warningYellow 代替')
+  static const Color warningAmber = warningYellow;
+  @Deprecated('使用 errorRed 代替')
+  static const Color errorSoftRed = errorRed;
 }
 
 /// 路由常量
