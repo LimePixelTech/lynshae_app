@@ -1,0 +1,89 @@
+# LynShae 灵羲智能 - Docker 编排配置
+# 包含：MySQL、Redis、Backend API、Web 管理后台
+
+services:
+  # ============================================
+  # MySQL 数据库
+  # ============================================
+  mysql:
+    image: docker.m.daocloud.io/library/mysql:8.0
+    container_name: lynshae-mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-LynShae@2026Root}
+      MYSQL_DATABASE: ${DB_NAME:-lynshae_db}
+      MYSQL_USER: lynshae
+      MYSQL_PASSWORD: ${DB_PASSWORD:-LynShae@2026}
+      TZ: Asia/Shanghai
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    volumes:
+      - ./backend/docker/mysql/data:/var/lib/mysql
+      - ./backend/docker/mysql/init:/docker-entrypoint-initdb.d
+      - ./backend/docker/mysql/conf:/etc/mysql/conf.d
+    networks:
+      - lynshae-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_PASSWORD:-LynShae@2026Root}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Redis 缓存
+  # ============================================
+  redis:
+    image: docker.m.daocloud.io/library/redis:7-alpine
+    container_name: lynshae-redis
+    restart: always
+    command: redis-server --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - ./backend/docker/redis/data:/data
+      - ./backend/docker/redis/conf:/usr/local/etc/redis
+    networks:
+      - lynshae-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================
+  # Backend API 服务 (Node.js)
+  # ============================================
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: lynshae-backend
+    restart: always
+    environment:
+      NODE_ENV: ${NODE_ENV:-production}
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-lynshae_db}
+      DB_USER: ${DB_USER:-lynshae}
+      DB_PASSWORD: ${DB_PASSWORD:-LynShae@2026}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      JWT_SECRET: ${JWT_SECRET:-lynshae-prod-secret-key-change-me}
+      CORS_ORIGIN: ${CORS_ORIGIN:-*}
+    ports:
+      - "${BACKEND_PORT:-3005}:3005"
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/logs:/app/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - lynshae-network
+    command: ["node", "src/server.js"]
+
+networks:
+  lynshae-network:
+    driver: bridge
